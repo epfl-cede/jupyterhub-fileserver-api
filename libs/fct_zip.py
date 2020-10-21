@@ -42,6 +42,7 @@ class ZfS:
             userloc = secure_filename(payload['user'])
             folder = secure_filename(payload['folder'])
             self.root = os.path.join(root, userloc, folder)
+            self.origin = os.path.join(userloc, folder)
             self.status = "OK"
             self.errcode = 0
 
@@ -55,7 +56,7 @@ class ZfS:
             self.errcode = 0
             zip = ZipBlob()
             blob = zip.GetZip(self.root)
-            return {'origin': self.root, 'blob': blob, "method": "base64", "mime": "application/zip"}
+            return {'origin': self.origin, 'blob': blob, "method": "base64", "mime": "application/zip"}
         except:
             self.status = "Error : zip is not working in this directory"
             self.errcode = -1
@@ -92,7 +93,8 @@ class UzU:
             else:
                 self.blob = payload['blob']
                 self.root = os.path.join(root, userloc, destination)
-                self.basename=os.path.join(root, userloc)
+                self.basename = os.path.join(root)
+
                 self.status = "OK"
                 self.errcode = 0
 
@@ -101,13 +103,13 @@ class UzU:
             self.errcode = 500
 
     def _checkdest(self):
-        root=self.root
+        root = self.root
         version = 1
-        while os.path.exists(root) :
+        while os.path.exists(root):
             version += 1
             root = self.root + "-V" + str(version)
 
-            if version > 100: #avoid infinite loop
+            if version > 100:  # avoid infinite loop
                 self.status = "Error : cannot find a place to extract"
                 self.errcode = -1
                 return False
@@ -122,7 +124,7 @@ class UzU:
                 self.errcode = 0
                 zip = ZipBlob()
                 zip.PutZip(self.blob, self.root)
-            return {'extractpath': self.root.replace(self.basename,'')}
+            return {'extractpath': self.root.replace(self.basename, '')}
         except:
             self.status = "Error : zip extract not working in this directory"
             self.errcode = -1
