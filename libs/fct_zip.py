@@ -101,11 +101,9 @@ class UzU:
             self.errcode = 500
 
     def _checkdest(self):
-        print("here0 :", self.root)
         root=self.root
         version = 1
         while os.path.exists(root) :
-            print("here :",self.root)
             version += 1
             root = self.root + "-V" + str(version)
 
@@ -120,7 +118,6 @@ class UzU:
     def _putUzU(self):
         try:
             if self._checkdest():
-                print("let'sgo")
                 self.status = "OK"
                 self.errcode = 0
                 zip = ZipBlob()

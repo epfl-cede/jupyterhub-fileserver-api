@@ -3,12 +3,13 @@ import time
 from libs.fct_global import CalcMd5
 
 
+
+
 class ValidateInput():
-    def __init__(self, request, auth, ttl, loc):
+    def __init__(self, request, auth, ttl):
         self.request = request
         self.auth = auth
         self.ttl = ttl
-        self.loc = loc.keys()
         self.status = None
         self.errcode = None
         self.valid = None
@@ -24,14 +25,9 @@ class ValidateInput():
                         md5 = CalcMd5(request=self.request, key=self.auth.UserKey(user))
                         if self.request['md5_payload'] == md5.md5_payload():  # check that payload has correct md5
                             if self.request['md5'] == md5.md5():  # check key encryption
-                                if self.request['command'] in self.loc:
-                                    self.status = "OK"
-                                    self.errcode = 0
-                                    return True
-                                else:
-                                    self.status = "Error : Command unknown"
-                                    self.errcode = 105
-                                    return False
+                                self.status = "OK"
+                                self.errcode = 0
+                                return True
                             else:
                                 self.status = "Error : checking md5"
                                 self.errcode = 104
@@ -58,7 +54,7 @@ class ValidateInput():
             return False
 
     def _validate_request(self):
-        keys = ['user', 'timestamp', 'command', 'payload', 'md5_payload', 'md5']
+        keys = ['user', 'timestamp', 'payload', 'md5_payload', 'md5']
 
         for key in keys:
             if key not in self.request:

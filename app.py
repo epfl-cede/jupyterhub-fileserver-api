@@ -3,14 +3,14 @@ from flask_restful import Resource, Api
 
 import logging
 import reusables
-import os
 
 from libs.fct_lod import LoD
-from libs.fct_zip import ZfS,UzU
+from libs.fct_zip import ZfS, UzU
 from libs.fct_output import Output
 from libs.fct_inputs import ValidateInput
 from libs.fct_auth import Auth
 from libs.fct_config import ConfigFile
+from flask_stats.flask_stats import Stats
 
 log = reusables.get_logger('main', level=logging.DEBUG)
 
@@ -20,37 +20,27 @@ conf = ConfigFile("config.json")
 
 app = Flask(__name__)
 api = Api(app)
+Stats(app)
 
 auth = Auth(conf.auth)
 
-# List of possible command
-LOC = {
-    "GET" :
-        {
-            'lod' : LoD,
-            'zfs' : ZfS,
-            'uzu' : UzU,
-    },
-}
 
-
-class Root(Resource):
-    def get(self):
-        loc=LOC["GET"]
+class callfct(Resource):
+    def run(self, fct, request):
         output = Output()
         if debug:
             log.debug(request.args)
 
-        validate = ValidateInput(request.args, auth, ttl=conf.ttl, loc=loc)
+        validate = ValidateInput(request.args, auth, ttl=conf.ttl)
         if validate.validate() and validate.isok():
             if debug:
                 log.debug("request is valid")
 
-                Ccommand = loc[request.args['command']](conf, request.args['payload'])  # changed for each commands
+                Ccommand = fct(conf, request.args['payload'])  # changed for each commands
 
                 if Ccommand.isok():
                     payload = Ccommand.GetPayload()
-                else :
+                else:
                     payload = None
 
                 if Ccommand.isok():
@@ -69,10 +59,38 @@ class Root(Resource):
             if debug:
                 log.debug("request is invalid")
             output.SetStatus(validate.GetStatus())
-            return (output.generate())
+            return output.generate()
 
 
-api.add_resource(Root, '/')
+# api.add_resource(Root, '/')
+
+@app.route('/')
+def hello():
+    output = Output()
+    output.SetStatus(status={
+        'code': 0,
+        'status': "OK"
+    })
+    return output.generate()
+
+
+@app.route('/lod', methods=['get'])
+def get_lod():
+    cfct = callfct()
+    return cfct.run(LoD, request)
+
+
+@app.route('/zfs', methods=['get'])
+def get_zfs():
+    cfct = callfct()
+    return cfct.run(ZfS, request)
+
+
+@app.route('/uzu', methods=['get'])
+def get_uzu():
+    cfct = callfct()
+    return cfct.run(UzU, request)
+
 
 if __name__ == '__main__':
     app.run()

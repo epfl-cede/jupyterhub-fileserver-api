@@ -7,4 +7,3 @@ class ConfigFile():
         self.ttl=self.configjson['ttl']
         self.homeroot=self.configjson['root']
         self.allget=self.configjson['allget']
-        self.port=self.configjson['port']

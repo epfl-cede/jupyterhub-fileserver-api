@@ -17,7 +17,6 @@ class CalcMd5:
         if key is not None:  # if key is not defined only payload can be calculated
             self.user = request['user']
             self.key = key
-            self.command = request['command']
             self.timestamp = request['timestamp']
             self.OnlyPayload = False
 
@@ -32,6 +31,6 @@ class CalcMd5:
         if not self.OnlyPayload:
             if self.save_md5_payload is None:
                 self.md5_payload()
-            string = self.user + self.timestamp + self.command + self.save_md5_payload + self.key
+            string = self.user + self.timestamp  + self.save_md5_payload + self.key
             self.save_md5 = str(hashlib.md5(string.encode('utf-8')).hexdigest())
         return self.save_md5
