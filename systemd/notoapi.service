@@ -1,0 +1,13 @@
+[Unit]
+Description=API for noto
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/home/fsapi/noto-api
+Environment=FLASK_CONFIG=production
+ExecStart=/home/fsapi/noto-api/venv/bin/gunicorn -b localhost:8080 -w 4 app:app
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
