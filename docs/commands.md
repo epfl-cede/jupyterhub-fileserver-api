@@ -73,7 +73,9 @@ Otherwise the status give an explanation about the error
 ## __/lod__ : List of directories
 Method : GET
 Description : This command list the directories inside a user folder. The desired user is given in the command payload
-Input : user (string) 
+Input :
+- user (string)
+ 
 Output : A table of :
 - name (string) : directory name
 - type (string) : "directory"
@@ -99,10 +101,15 @@ Output : A table of :
 ```
 
 ## __/zfs__ Send a directory as zip
+
 Method : GET
+
 Description : This command return a zip (blob) from a given directory
-Input : user (string)
-Input : folder (string) : the path of the folder where the zip will be started
+
+Input : 
+- user (string)
+- folder (string) : the path of the folder where the zip will be started
+
 Output :
 - origin (string) : directory path
 - blob (string) : blob of zip in base64
@@ -124,11 +131,13 @@ Output :
 
 Method : POST (now GET only)
 Description : This command upload a zip (blob) and extract it in a given directory
-Input : user (string)
-Input : folder (string) : the path of the folder where the zip will be extracted
-Input :  blob (string) : blob of the zip in base64
-Input : method (string): "base64"
-Input : mime (string) : "application/zip" 
+Input :
+- user (string)
+- folder (string) : the path of the folder where the zip will be extracted
+- blob (string) : blob of the zip in base64
+- method (string): "base64"
+- mime (string) : "application/zip" 
+
 Output :
 - extractpath (string) : directory of extraction
 _Note_ : if the destination already exist in the folder then the API will add a -V<number> at the end of the path until it find a non-existing version.
@@ -137,7 +146,7 @@ _Note_ : if the destination already exist in the folder then the API will add a 
 
 ### Example
 
--Input :
+- Input :
 ```
 { user: "machin", destination: "assign", blob: blob, method: "base64", mime: "application/zip" };
 ```
