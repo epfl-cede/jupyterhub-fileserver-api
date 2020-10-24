@@ -163,3 +163,57 @@ _Note_ : if the destination already exist in the folder then the API will add a 
 }
 ```
 
+## __/endpoints_stats__ Statics on endpoints
+
+Return the usage and timings on each endpoints on the api
+
+Note: This is accessible without keys
+
+### Example
+
+- Input : 
+ _None_
+- Output :`
+```
+{
+    "duration": [
+        {
+            "endpoint \"/\" ": {
+                "avg": 0.005962371826171875,
+                "count": 1,
+                "max": 0.005962371826171875,
+                "min": 0.005962371826171875,
+                "percentile_25": 0.005962371826171875,
+                "percentile_50": 0.005962371826171875,
+                "percentile_75": 0.005962371826171875,
+                "percentile_90": 0.005962371826171875
+            }
+        },
+        {
+            "endpoint \"/endpoints_stats\" ": {
+                "avg": 0.06605410575866699,
+                "count": 1,
+                "max": 0.06605410575866699,
+                "min": 0.06605410575866699,
+                "percentile_25": 0.06605410575866699,
+                "percentile_50": 0.06605410575866699,
+                "percentile_75": 0.06605410575866699,
+                "percentile_90": 0.06605410575866699
+            }
+        },
+        {
+            "endpoint \"/lod\" ": {
+                "avg": 0.011118471622467041,
+                "count": 4,
+                "max": 0.012638092041015625,
+                "min": 0.009519815444946289,
+                "percentile_25": 0.009519815444946289,
+                "percentile_50": 0.01044607162475586,
+                "percentile_75": 0.01186990737915039,
+                "percentile_90": 0.01186990737915039
+            }
+        }
+    ]
+}
+``
+

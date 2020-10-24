@@ -43,8 +43,12 @@ class ZfS:
             folder = secure_filename(payload['folder'])
             self.root = os.path.join(root, userloc, folder)
             self.origin = os.path.join(userloc, folder)
-            self.status = "OK"
-            self.errcode = 0
+            if not os.path.exists(os.path.join(root, userloc)):
+                self.status = "Error : destination does not exist"
+                self.errcode = 440
+            else :
+                self.status = "OK"
+                self.errcode = 0
 
         except:
             self.status = "Error with payload"
@@ -90,6 +94,9 @@ class UzU:
             if destination == ".":
                 self.status = "Error : destination is not defined"
                 self.errcode = 500
+            elif not os.path.exists(root):
+                self.status = "Error : destination does not exist"
+                self.errcode = 440
             else:
                 self.blob = payload['blob']
                 self.root = os.path.join(root, userloc, destination)
