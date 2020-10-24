@@ -12,3 +12,5 @@ __most commands should be launched in the project root__
 - Install packages from list : ``` pip install -r requirements.txt ```
 - Upgrade packages : ``` pip install --upgrade -r requirements.txt ```
 
+# Run
+- ```sudo ./venv/bin/flask run --port 8080 --host 0.0.0.0```

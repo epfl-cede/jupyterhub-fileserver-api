@@ -27,7 +27,7 @@ class LoD:
                 d['type'] = "directory"
                 d['children'] = []
                 for x in os.listdir(path):
-                    if os.path.isdir(os.path.join(path, x)):
+                    if not x.startswith('.') and os.path.isdir(os.path.join(path, x)):
                         d['children'].append(self._path_to_dict(os.path.join(path, x)))
             return d
         else:
