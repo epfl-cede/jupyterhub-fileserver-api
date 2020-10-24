@@ -35,6 +35,9 @@ class ZipBlob:
 
 
 class ZfS:
+    """
+    This class is called for downloading a Zip from a given directory
+    """
     def __init__(self, conf, payload):
         try:
             root = conf.homeroot
@@ -43,7 +46,7 @@ class ZfS:
             folder = secure_filename(payload['folder'])
             self.root = os.path.join(root, userloc, folder)
             self.origin = os.path.join(userloc, folder)
-            if not os.path.exists(os.path.join(root, userloc)):
+            if not os.path.exists(self.root):
                 self.status = "Error : destination does not exist"
                 self.errcode = 440
             else :
@@ -85,6 +88,9 @@ class ZfS:
 
 
 class UzU:
+    """
+    This class is called for uploading a zip into a given directory
+    """
     def __init__(self, conf, payload):
         try:
             root = conf.homeroot
@@ -94,7 +100,7 @@ class UzU:
             if destination == ".":
                 self.status = "Error : destination is not defined"
                 self.errcode = 500
-            elif not os.path.exists(root):
+            elif not os.path.exists(os.path.join(root, userloc)):
                 self.status = "Error : destination does not exist"
                 self.errcode = 440
             else:
