@@ -70,7 +70,7 @@ Otherwise the status give an explanation about the error
 
 # Commands
 
-## __/lod__ : List of directories
+## __/ls__ : List the contents of a path for a given user
 Method : GET
 Description : This command list the directories and file for a given path inside an user folder. 
 The desired user and path is given in the command payload
@@ -82,7 +82,7 @@ Input :
 Output : A table of :
 - name (string) : name of the object
 - type (string) : "directory" or "file"
-- last-modification (formated string ```%Y-%m-%d %H:%M:%S``) : last modification (for file only) 
+- last-modification (formated string ````%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
 ### Example :
 - Input : 
 ```
@@ -99,7 +99,7 @@ Output : A table of :
         "status": "OK"
     }
 }
-```
+``
 
 ## __/lod__ : List of directories
 Method : GET
