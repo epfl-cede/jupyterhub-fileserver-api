@@ -4,13 +4,13 @@ from flask_restful import Resource, Api
 import logging
 import reusables
 
-from libs.fct_lod import LoD
+from libs.fct_lod import LoD, Ls
 from libs.fct_zip import ZfS, UzU
 from libs.fct_output import Output
 from libs.fct_inputs import ValidateInput
 from libs.fct_auth import Auth
 from libs.fct_config import ConfigFile
-from flask_stats.flask_stats import Stats
+from libs.flask_stats.flask_stats import Stats
 
 log = reusables.get_logger('main', level=logging.DEBUG)
 
@@ -73,6 +73,10 @@ def hello():
     })
     return output.generate()
 
+@app.route('/ls', methods=['get'])
+def get_ls():
+    cfct = callfct()
+    return cfct.run(Ls, request)
 
 @app.route('/lod', methods=['get'])
 def get_lod():

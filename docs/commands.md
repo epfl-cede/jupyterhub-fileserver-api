@@ -72,7 +72,38 @@ Otherwise the status give an explanation about the error
 
 ## __/lod__ : List of directories
 Method : GET
-Description : This command list the directories inside a user folder. The desired user is given in the command payload
+Description : This command list the directories and file for a given path inside an user folder. 
+The desired user and path is given in the command payload
+
+Input :
+- user (string)
+- path (string)
+
+Output : A table of :
+- name (string) : name of the object
+- type (string) : "directory" or "file"
+- last-modification (formated string ```%Y-%m-%d %H:%M:%S``) : last modification (for file only) 
+### Example :
+- Input : 
+```
+{ user: "antoine" , path:"truc/test0"}
+```
+
+- Output :
+ ```
+{
+    "md5_payload": "c52c4f1ca687bd6b48a18b898adfa7d3",
+    "payload": "[{\"name\": \"rrr6.txt\", \"type\": \"file\", \"last-modification\": \"2020-09-18 20:28:04\"}, {\"name\": \"test0.1\", \"type\": \"directory\"}]",
+    "return": {
+        "code": 0,
+        "status": "OK"
+    }
+}
+```
+
+## __/lod__ : List of directories
+Method : GET
+Description : This command list the directories inside an user folder. The desired user is given in the command payload
 Input :
 - user (string)
  

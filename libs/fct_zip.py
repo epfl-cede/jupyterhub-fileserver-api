@@ -43,7 +43,7 @@ class ZfS:
             root = conf.homeroot
             payload = json.loads(payload)
             userloc = secure_filename(payload['user'])
-            folder = secure_filename(payload['folder'])
+            folder = payload['folder']
             self.root = os.path.join(root, userloc, folder)
             self.origin = os.path.join(userloc, folder)
             if not os.path.exists(self.root):
@@ -96,7 +96,7 @@ class UzU:
             root = conf.homeroot
             payload = json.loads(payload)
             userloc = secure_filename(payload['user'])
-            destination = secure_filename(payload['destination'])
+            destination = payload['destination']
             if destination == ".":
                 self.status = "Error : destination is not defined"
                 self.errcode = 500
