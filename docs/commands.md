@@ -101,7 +101,7 @@ Output : A table of :
 }
 ``
 
-## __/lod__ : List of directories
+## __/lod__ : List of directorie`s
 Method : GET
 Description : This command list the directories inside an user folder. The desired user is given in the command payload
 Input :
