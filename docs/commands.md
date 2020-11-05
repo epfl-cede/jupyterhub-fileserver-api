@@ -99,7 +99,7 @@ Output : A table of :
         "status": "OK"
     }
 }
-``
+```
 
 ## __/lod__ : List of directorie`s
 Method : GET
@@ -119,7 +119,7 @@ Output : A table of :
 ```
 
 - Output :
- ```
+```
 {
     "md5_payload": "9e537c263b5aa2ad3f271fc0f7c7b2de",
     "payload": "{\"name\": \"antoine\", \"type\": \"directory\", 
@@ -204,6 +204,7 @@ Note: This is accessible without keys
 
 - Input : 
  _None_
+
 - Output :`
 ```
 {
@@ -246,5 +247,5 @@ Note: This is accessible without keys
         }
     ]
 }
-``
+```
 
