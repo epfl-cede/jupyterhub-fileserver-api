@@ -82,7 +82,7 @@ Input :
 Output : A table of :
 - name (string) : name of the object
 - type (string) : "directory" or "file"
-- last-modification (formated string ````%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
+- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
 ### Example :
 - Input : 
 ```
