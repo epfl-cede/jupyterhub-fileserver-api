@@ -7,8 +7,16 @@ Every input should have those parameters :
 - 'md5'
 
 ## user
-Type : string
-The username for accessing the API
+Type : json table
+Fields :
+- id (string) : moodle user id 
+- primary_email (string) : Email of moodle user
+- auth_method (string) : authentication method from moodle
+
+### Example 
+```
+user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}
+```
 
 ## timestemp
 Type : int
@@ -86,7 +94,7 @@ Output : A table of :
 ### Example :
 - Input : 
 ```
-{ user: "antoine" , path:"truc/test0"}
+{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, path:"truc/test0"}
 ```
 
 - Output :
@@ -101,7 +109,7 @@ Output : A table of :
 }
 ```
 
-## __/lod__ : List of directorie`s
+## __/lod__ : List of directories
 Method : GET
 Description : This command list the directories inside an user folder. The desired user is given in the command payload
 Input :
@@ -115,7 +123,7 @@ Output : A table of :
 ### Example :
 - Input : 
 ```
-{ user: "antoine" }
+{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"} }
 ```
 
 - Output :
@@ -149,7 +157,7 @@ Output :
 
 ### Example
 
-- Input : ```{ user: "antoine", folder: "truc" }```
+- Input : ```{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, folder: "truc" }```
 - Output :
 ```
 {\"origin\": \"antoine/truc\", 
@@ -179,7 +187,7 @@ _Note_ : if the destination already exist in the folder then the API will add a 
 
 - Input :
 ```
-{ user: "machin", destination: "assign", blob: blob, method: "base64", mime: "application/zip" };
+{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, destination: "assign", blob: blob, method: "base64", mime: "application/zip" };
 ```
 
 - Output :

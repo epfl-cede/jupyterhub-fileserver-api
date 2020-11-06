@@ -1,5 +1,9 @@
 import hashlib
 
+import json
+from notouser import notoUser
+
+
 class CalcMd5:
     """
     This class is used for calculating md5 values for payload and key verification
@@ -31,6 +35,33 @@ class CalcMd5:
         if not self.OnlyPayload:
             if self.save_md5_payload is None:
                 self.md5_payload()
-            string = self.user + self.timestamp  + self.save_md5_payload + self.key
+            string = self.user + self.timestamp + self.save_md5_payload + self.key
             self.save_md5 = str(hashlib.md5(string.encode('utf-8')).hexdigest())
         return self.save_md5
+
+
+class moodle2notouser:
+    """
+    This class is used to do operation on login info from moodle into noto
+    """
+
+    def __init__(self, userpayload):
+        try:
+            self.id = userpayload['id']
+            self.email = userpayload['primary_email']
+            self.auth_meth = userpayload['auth_method']
+        except:
+            self.status = "Error with user payload"
+            self.errcode = 510
+        try:
+            n = notoUser()
+            self.NotoUser = n.userFromAPI(self.id, self.email)
+        except:
+            self.status = "Error with notoUser "
+            self.errcode = 515
+
+    def getNotoUser(self):
+        return self.NotoUser['normalised']
+
+    def getNotoUserid(self):
+        return self.NotoUser['uid']

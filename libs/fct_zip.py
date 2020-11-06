@@ -5,6 +5,8 @@ import json
 from werkzeug.utils import secure_filename
 import base64
 
+from libs.fct_global import moodle2notouser
+
 
 class ZipBlob:
     """
@@ -42,7 +44,8 @@ class ZfS:
         try:
             root = conf.homeroot
             payload = json.loads(payload)
-            userloc = secure_filename(payload['user'])
+            user = moodle2notouser(payload['user'])
+            userloc=user.getNotoUser()
             folder = payload['folder']
             self.root = os.path.join(root, userloc, folder)
             self.origin = os.path.join(userloc, folder)
@@ -95,7 +98,8 @@ class UzU:
         try:
             root = conf.homeroot
             payload = json.loads(payload)
-            userloc = secure_filename(payload['user'])
+            user = moodle2notouser(payload['user'])
+            userloc = user.getNotoUser()
             destination = payload['destination']
             if destination == ".":
                 self.status = "Error : destination is not defined"
