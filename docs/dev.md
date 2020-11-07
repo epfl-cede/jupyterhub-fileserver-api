@@ -12,5 +12,10 @@ __most commands should be launched in the project root__
 - Install packages from list : ``` pip install -r requirements.txt ```
 - Upgrade packages : ``` pip install --upgrade -r requirements.txt ```
 
+## Install noto lib
+```cp -rv /usr/local/lib/python3.6/dist-packages/cedelogger venv/lib/python3.6/site-packages```
+```cp -rv /usr/local/lib/python3.6/dist-packages/notouser venv/lib/python3.6/site-packages```
+
+
 # Run
 - ```sudo ./venv/bin/flask run --port 8080 --host 0.0.0.0```

@@ -4,7 +4,7 @@ Every input should have those parameters :
 - 'timestamp'
 - 'payload'
 - 'md5_payload'
-- 'md5'
+- key'
 
 ## user
 Type : json table
@@ -30,16 +30,16 @@ Could be empty '{}' or extra command depending of the endpoint
 Type : string
 The md5 (base64) of the payload
 
-## md5
+## key
 Type : string
-The md5 (base64) of user + timestamp  + md5p + key
-Note : key is shared between the api and the user and is not send
+The hmac-sha256 (base64) of user(utf8) + timestamp(utf8)  + md5_payload(base64) using the shared key for encryption
+Note : key is shared between the api and the user and it is not send
 
 
 # General output
 
 The output is a JSON string with 
-- md5_payload
+- md5_payload(base64)
 - payload
 - return
     - code
@@ -68,12 +68,13 @@ Otherwise the status give an explanation about the error
 ## Example 
 ```
 {
-    "md5_payload": "9e537c263b5aa2ad3f271fc0f7c7b2de",
-    "payload": "{\"name\": \"antoine\", \"type\": \"directory\", \"children\": [{\"name\": \"essai\", \"type\": \"directory\", \"children\": []}, {\"name\": \"important\", \"type\": \"directory\", \"children\": [{\"name\": \"bidule\", \"type\": \"directory\", \"children\": []}]}, {\"name\": \"truc\", \"type\": \"directory\", \"children\": [{\"name\": \"test0\", \"type\": \"directory\", \"children\": [{\"name\": \"test0.1\", \"type\": \"directory\", \"children\": []}]}]}]}",
+    "md5_payload": "mZFLkyvTelC5g8XnyQrpOw==",
+    "payload": "{}",
     "return": {
         "code": 0,
         "status": "OK"
     }
+}
 ```
 
 # Commands
@@ -100,8 +101,8 @@ Output : A table of :
 - Output :
  ```
 {
-    "md5_payload": "c52c4f1ca687bd6b48a18b898adfa7d3",
-    "payload": "[{\"name\": \"rrr6.txt\", \"type\": \"file\", \"last-modification\": \"2020-09-18 20:28:04\"}, {\"name\": \"test0.1\", \"type\": \"directory\"}]",
+    "md5_payload": "y63WGT+xQaB0EFdrIPEMUg==",
+    "payload": "[{\"name\": \"Documentation\", \"type\": \"directory\"}, {\"name\": \"my_venvs\", \"type\": \"directory\"}, {\"name\": \"my_notebooks\", \"type\": \"directory\"}, {\"name\": \"git\", \"type\": \"directory\"}, {\"name\": \"switchdrive\", \"type\": \"directory\"}, {\"name\": \"Untitled.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-03-30 16:52:11\"}, {\"name\": \"fill.sh\", \"type\": \"file\", \"last-modification\": \"2019-08-14 16:20:53\"}, {\"name\": \"JuliaTest.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-03-26 09:03:28\"}, {\"name\": \"Neuron.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-03-25 15:40:25\"}, {\"name\": \"Java.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-03-26 09:04:23\"}, {\"name\": \"SQL.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-04-27 23:37:49\"}, {\"name\": \"cities.sqlite\", \"type\": \"file\", \"last-modification\": \"2020-04-27 23:36:03\"}, {\"name\": \"Untitled1.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-05-04 17:31:51\"}, {\"name\": \"spawn.rules\", \"type\": \"file\", \"last-modification\": \"2020-03-30 17:08:15\"}, {\"name\": \"jnb.conf\", \"type\": \"file\", \"last-modification\": \"2020-05-04 14:23:35\"}, {\"name\": \"nest.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-05-19 15:04:52\"}, {\"name\": \"Slides.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-06-18 17:23:30\"}, {\"name\": \"testslides.py\", \"type\": \"file\", \"last-modification\": \"2020-06-18 17:04:14\"}, {\"name\": \"Octave\", \"type\": \"directory\"}, {\"name\": \"Untitled2.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-09-21 23:25:04\"}, {\"name\": \"Untitled3.ipynb\", \"type\": \"file\", \"last-modification\": \"2020-07-08 15:43:34\"}, {\"name\": \"toto\", \"type\": \"directory\"}, {\"name\": \"assign\", \"type\": \"directory\"}, {\"name\": \"assign-V2\", \"type\": \"directory\"}, {\"name\": \"assign-V3\", \"type\": \"directory\"}, {\"name\": \"assign-V4\", \"type\": \"directory\"}, {\"name\": \"assign-V5\", \"type\": \"directory\"}]",
     "return": {
         "code": 0,
         "status": "OK"
@@ -129,7 +130,7 @@ Output : A table of :
 - Output :
 ```
 {
-    "md5_payload": "9e537c263b5aa2ad3f271fc0f7c7b2de",
+    "md5_payload": "...",
     "payload": "{\"name\": \"antoine\", \"type\": \"directory\", 
 \"children\": [{\"name\": \"essai\", \"type\": \"directory\", \"children\": []}, {\"name\": \"important\", \"type\": \"directory\", \"children\": [{\"name\": \"bidule\", \"type\": \"directory\", \"children\": []}]}, {\"name\": \"truc\", \"type\": \"directory\", \"children\": [{\"name\": \"test0\", \"type\": \"directory\", \"children\": [{\"name\": \"test0.1\", \"type\": \"directory\", \"children\": []}]}]}]}",
     "return": {
@@ -160,10 +161,14 @@ Output :
 - Input : ```{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, folder: "truc" }```
 - Output :
 ```
-{\"origin\": \"antoine/truc\", 
-\"blob\": \"..\",
- \"method\": \"base64\",
- \"mime\": \"application/zip\"}
+{
+    "md5_payload": "KmNIY9E57uw9PkADx4eMhg==",
+    "payload": "{\"origin\": \"povalles/toto\", \"blob\": \"UEsDBBQAAAAIADVgY1EADxSrCgAAAAgAAAALAAAAaGVsbG9fd29ybGTLSM3JyVdQ5AIAUEsBAhQDFAAAAAgANWBjUQAPFKsKAAAACAAAAAsAAAAAAAAAAAAAAKSBAAAAAGhlbGxvX3dvcmxkUEsFBgAAAAABAAEAOQAAADMAAAAAAA==\", \"method\": \"base64\", \"mime\": \"application/zip\"}",
+    "return": {
+        "code": 0,
+        "status": "OK"
+    }
+}
 ```
 
 ## __/uzu__ Upload a zip and extract it in a given directory
@@ -193,8 +198,8 @@ _Note_ : if the destination already exist in the folder then the API will add a 
 - Output :
 ```
 {
-    "md5_payload": "e88cc1a2b9b79dee6bcd304c81ed116b",
-    "payload": "{\"extractpath\": \"/assign-V6\"}",
+    "md5_payload": "PNorwNys7O56G/Ljexix1A==",
+    "payload": "{\"extractpath\": \"/povalles/assign-V5\"}",
     "return": {
         "code": 0,
         "status": "OK"

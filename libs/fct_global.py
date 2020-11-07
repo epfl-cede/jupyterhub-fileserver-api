@@ -1,8 +1,37 @@
-import hashlib
+import base64
+import hashlib, hmac
 
 import json
 from notouser import notoUser
 
+class CalcHmac:
+    """
+    This class is used to calculate the HMAC-SHA256 key for authentication
+    """
+    def __init__(self, request, key):
+        """
+        Initiate the CalcHmac class
+        :param request: dict with request arguments
+        :param key: secret key for this user
+        """
+
+        self.payload = request['payload']
+        self.user = request['user']
+        self.key = key
+        self.timestamp = request['timestamp']
+        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest()).decode('utf-8')
+        self.hmac = None
+
+    def getHmac(self):
+        """
+        This function calculate the hmac sha256 using the key
+        :return: the base64 hmac of self.user + self.timestamp + self.save_md5_payload
+        """
+
+        string = self.user + self.timestamp + self.md5_payload
+        self.hmac = base64.b64encode(hmac.new(self.key.encode('utf-8'), string.encode('utf-8'), digestmod=hashlib.sha256).digest())
+
+        return self.hmac.decode('utf-8')
 
 class CalcMd5:
     """
@@ -17,27 +46,16 @@ class CalcMd5:
         """
 
         self.payload = request['payload']
-        self.OnlyPayload = True
-        if key is not None:  # if key is not defined only payload can be calculated
-            self.user = request['user']
-            self.key = key
-            self.timestamp = request['timestamp']
-            self.OnlyPayload = False
 
-        self.save_md5 = None
-        self.save_md5_payload = None
 
     def md5_payload(self):
-        self.save_md5_payload = str(hashlib.md5(self.payload.encode('utf-8')).hexdigest())
-        return self.save_md5_payload
+        """
+        Calculate the md5 of the payload
+        :return: base64 md5(payload)
+        """
+        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest())
+        return self.md5_payload.decode('utf-8')
 
-    def md5(self):
-        if not self.OnlyPayload:
-            if self.save_md5_payload is None:
-                self.md5_payload()
-            string = self.user + self.timestamp + self.save_md5_payload + self.key
-            self.save_md5 = str(hashlib.md5(string.encode('utf-8')).hexdigest())
-        return self.save_md5
 
 
 class moodle2notouser:

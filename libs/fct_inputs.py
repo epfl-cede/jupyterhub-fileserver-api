@@ -1,8 +1,6 @@
 import time
 
-from libs.fct_global import CalcMd5
-
-
+from libs.fct_global import CalcMd5, CalcHmac
 
 
 class ValidateInput():
@@ -22,14 +20,15 @@ class ValidateInput():
                 timestamp = int(self.request['timestamp'])
                 if self.auth.CheckUser(user):  # check that user exist
                     if time.time() - timestamp <= self.ttl:  # check that timing is in the ttl range
-                        md5 = CalcMd5(request=self.request, key=self.auth.UserKey(user))
+                        md5 = CalcMd5(request=self.request)
                         if self.request['md5_payload'] == md5.md5_payload():  # check that payload has correct md5
-                            if self.request['md5'] == md5.md5():  # check key encryption
+                            hmac = CalcHmac(request=self.request, key=self.auth.UserKey(user))
+                            if self.request['key'] == hmac.getHmac():  # check key encryption
                                 self.status = "OK"
                                 self.errcode = 0
                                 return True
                             else:
-                                self.status = "Error : checking md5"
+                                self.status = "Error : checking hmac"
                                 self.errcode = 104
                                 return False
                         else:
@@ -54,7 +53,7 @@ class ValidateInput():
             return False
 
     def _validate_request(self):
-        keys = ['user', 'timestamp', 'payload', 'md5_payload', 'md5']
+        keys = ['user', 'timestamp', 'payload', 'md5_payload', 'key']
 
         for key in keys:
             if key not in self.request:
@@ -68,9 +67,10 @@ class ValidateInput():
             return True
         else:
             return False
+
     def GetStatus(self):
         status = {
-            'code' : self.errcode,
-            'status' : self.status
+            'code': self.errcode,
+            'status': self.status
         }
         return status
