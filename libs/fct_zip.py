@@ -109,7 +109,7 @@ class UzU:
             root = conf.homeroot
             payload = json.loads(payload)
             self.user = moodle2notouser(payload['user'])
-            if user.errcode == 0:
+            if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
                 destination = payload['destination']
                 if destination == ".":
