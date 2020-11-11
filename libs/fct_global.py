@@ -3,11 +3,15 @@ import hashlib, hmac
 
 import json
 from notouser import notoUser
+from cedelogger import cedeLogger
+import logging
+
 
 class CalcHmac:
     """
     This class is used to calculate the HMAC-SHA256 key for authentication
     """
+
     def __init__(self, request, key):
         """
         Initiate the CalcHmac class
@@ -29,9 +33,11 @@ class CalcHmac:
         """
 
         string = self.user + self.timestamp + self.md5_payload
-        self.hmac = base64.b64encode(hmac.new(self.key.encode('utf-8'), string.encode('utf-8'), digestmod=hashlib.sha256).digest())
+        self.hmac = base64.b64encode(
+            hmac.new(self.key.encode('utf-8'), string.encode('utf-8'), digestmod=hashlib.sha256).digest())
 
         return self.hmac.decode('utf-8')
+
 
 class CalcMd5:
     """
@@ -47,7 +53,6 @@ class CalcMd5:
 
         self.payload = request['payload']
 
-
     def md5_payload(self):
         """
         Calculate the md5 of the payload
@@ -55,7 +60,6 @@ class CalcMd5:
         """
         self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest())
         return self.md5_payload.decode('utf-8')
-
 
 
 class moodle2notouser:
@@ -71,15 +75,38 @@ class moodle2notouser:
         except:
             self.status = "Error with user payload"
             self.errcode = 510
-        try:
-            n = notoUser()
-            self.NotoUser = n.userFromAPI(self.id, self.email)
-        except:
-            self.status = "Error with notoUser "
-            self.errcode = 515
+        n = notoUser()
+        if self.auth_meth == "test":
+            if self.email == "test@epfl.ch" and self.id == "test":
+                self.NotoUser = n.userFromAPI('253705', 'pierre-olivier.valles@epfl.ch')
+                self.status = "OK"
+                self.errcode = 0
+            else:
+                self.status = "Error this test user is unknown"
+                self.errcode = 511
+        else:
+            try:
+                self.NotoUser = n.userFromAPI(self.id, self.email)
+                self.status = "OK"
+                self.errcode = 0
+            except:
+                self.status = "Error with notoUser"
+                self.errcode = 515
 
     def getNotoUser(self):
         return self.NotoUser['normalised']
 
     def getNotoUserid(self):
         return self.NotoUser['uid']
+
+
+class SendLog:
+    """
+    This class is used to send log to noto syslog
+    """
+
+    def __init__(self):
+        self.logger = cedeLogger(tag='fsapi')
+
+    def write(self, event, action, userid):
+        self.logger.log({'event': event, 'action': action, 'uid': userid}, level=logging.CRITICAL)

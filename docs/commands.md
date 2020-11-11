@@ -4,7 +4,7 @@ Every input should have those parameters :
 - 'timestamp'
 - 'payload'
 - 'md5_payload'
-- key'
+- 'key'
 
 ## user
 Type : json table
@@ -13,9 +13,15 @@ Fields :
 - primary_email (string) : Email of moodle user
 - auth_method (string) : authentication method from moodle
 
+### Test user 
+In order to try the API an user test can be used
+ ``` user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"} ```
+
+**Be careful the ```test```  auth_method is reserved and only this login will work**
+
 ### Example 
 ```
-user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}
+user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"noto"}
 ```
 
 ## timestemp
@@ -95,7 +101,7 @@ Output : A table of :
 ### Example :
 - Input : 
 ```
-{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, path:"truc/test0"}
+{ user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"}, path:"truc/test0"}
 ```
 
 - Output :
@@ -124,7 +130,7 @@ Output : A table of :
 ### Example :
 - Input : 
 ```
-{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"} }
+{ user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"} ,path:"./"} }
 ```
 
 - Output :
@@ -158,7 +164,7 @@ Output :
 
 ### Example
 
-- Input : ```{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, folder: "truc" }```
+- Input : ```{ user:{id:'test', primary_email:'test@epfl.ch',auth_method:"test"}, folder: "truc" }```
 - Output :
 ```
 {
@@ -173,26 +179,29 @@ Output :
 
 ## __/uzu__ Upload a zip and extract it in a given directory
 
-Method : POST (now GET only)
+Method : POST
 Description : This command upload a zip (blob) and extract it in a given directory
 Input :
 - user (string)
 - folder (string) : the path of the folder where the zip will be extracted
-- blob (string) : blob of the zip in base64
-- method (string): "base64"
-- mime (string) : "application/zip" 
+
+The file is send through _form_data_ inside the ```file``` key
 
 Output :
 - extractpath (string) : directory of extraction
 _Note_ : if the destination already exist in the folder then the API will add a -V<number> at the end of the path until it find a non-existing version.
-- method (string) : "base64"
-- mime  (string) : "application/zip"
+
 
 ### Example
 
 - Input :
 ```
-{ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"test"}, destination: "assign", blob: blob, method: "base64", mime: "application/zip" };
+{ user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"}, destination: "assign"}```
+
++
+
+```file``` in  _form_data_
+
 ```
 
 - Output :

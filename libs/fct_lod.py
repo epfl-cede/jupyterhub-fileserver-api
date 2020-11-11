@@ -10,16 +10,19 @@ from libs.fct_global import moodle2notouser
 
 class LoD:
 
-    def __init__(self, conf, payload):
+    def __init__(self, conf, payload, *kwargs):
         try:
             root = conf.homeroot
             payload = json.loads(payload)
             user = moodle2notouser(payload['user'])
-            userloc=user.getNotoUser()
-            self.root = os.path.join(root, userloc)
-            self.status = "OK"
-            self.errcode = 0
-
+            if user.errcode == 0:
+                userloc = user.getNotoUser()
+                self.root = os.path.join(root, userloc)
+                self.status = "OK"
+                self.errcode = 0
+            else :
+                self.status = user.status
+                self.errcode = user.errcode
         except:
             self.status = "Error with payload"
             self.errcode = 500
@@ -70,17 +73,21 @@ class LoD:
 
 class Ls:
 
-    def __init__(self, conf, payload):
+    def __init__(self, conf, payload, *kwargs):
         try:
             root = conf.homeroot
             payload = json.loads(payload)
             user = moodle2notouser(payload['user'])
-            userloc=user.getNotoUser()
 
-            path = payload['path']
-            self.root = os.path.join(root, userloc, path)
-            self.status = "OK"
-            self.errcode = 0
+            if user.errcode == 0:
+                userloc = user.getNotoUser()
+                path = payload['path']
+                self.root = os.path.join(root, userloc, path)
+                self.status = "OK"
+                self.errcode = 0
+            else :
+                self.status = user.status
+                self.errcode = user.errcode
 
         except:
             self.status = "Error with payload"

@@ -6,4 +6,4 @@ class ConfigFile():
         self.auth=self.configjson['auth']
         self.ttl=self.configjson['ttl']
         self.homeroot=self.configjson['root']
-        self.allget=self.configjson['allget']
+        self.allget=False #self.configjson['allget']

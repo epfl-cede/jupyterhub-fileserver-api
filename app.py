@@ -21,7 +21,6 @@ conf = ConfigFile("config.json")
 app = Flask(__name__)
 api = Api(app)
 Stats(app)
-
 auth = Auth(conf.auth)
 
 
@@ -36,7 +35,7 @@ class callfct(Resource):
             if debug:
                 log.debug("request is valid")
 
-                Ccommand = fct(conf, request.args['payload'])  # changed for each commands
+                Ccommand = fct(conf, request.args['payload'],request.files)  # changed for each commands
 
                 if Ccommand.isok():
                     payload = Ccommand.GetPayload()
@@ -73,25 +72,28 @@ def hello():
     })
     return output.generate()
 
-@app.route('/ls', methods=['get'])
+
+@app.route('/ls', methods=['GET'])
 def get_ls():
     cfct = callfct()
     return cfct.run(Ls, request)
 
-@app.route('/lod', methods=['get'])
+
+@app.route('/lod', methods=['GET'])
 def get_lod():
     cfct = callfct()
     return cfct.run(LoD, request)
 
 
-@app.route('/zfs', methods=['get'])
+@app.route('/zfs', methods=['GET'])
 def get_zfs():
     cfct = callfct()
     return cfct.run(ZfS, request)
 
 
-@app.route('/uzu', methods=['get'])
-def get_uzu():
+@app.route('/uzu', methods=['POST'])
+def post_uzu():
+    print("here")
     cfct = callfct()
     return cfct.run(UzU, request)
 

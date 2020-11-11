@@ -27,8 +27,6 @@ TimeToLive : time validity of the request (in seconds)
 ## root
 Path to the root of user directories
 
-## allget
-true/false : put all the requests in get instead of a mixture of post / get (NOT IMPLEMENTED YET)
 
 # Changing the production port 
 
