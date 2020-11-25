@@ -81,6 +81,16 @@ class moodle2notouser:
                 self.NotoUser = n.userFromAPI('253705', 'pierre-olivier.valles@epfl.ch')
                 self.status = "OK"
                 self.errcode = 0
+            elif self.email == "test2@epfl.ch" and self.id == "test2":
+                self.NotoUser = {"normalised":"test2", "uid":"test2"}
+                self.status = "OK"
+                self.errcode = 0
+            elif self.email == "test3@epfl.ch" and self.id == "test3":
+                self.NotoUser = {"normalised":"test3", "uid":"test3"}
+                self.status = "OK"
+                self.errcode = 0
+
+
             else:
                 self.status = "Error this test user is unknown"
                 self.errcode = 511

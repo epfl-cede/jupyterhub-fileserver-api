@@ -20,7 +20,7 @@ class LoD:
                 self.root = os.path.join(root, userloc)
                 self.status = "OK"
                 self.errcode = 0
-            else :
+            else:
                 self.status = user.status
                 self.errcode = user.errcode
         except:
@@ -71,6 +71,76 @@ class LoD:
         return status
 
 
+class LoF:
+
+    def __init__(self, conf, payload, *kwargs):
+        try:
+            root = conf.homeroot
+            payload = json.loads(payload)
+            user = moodle2notouser(payload['user'])
+
+            if user.errcode == 0:
+                userloc = user.getNotoUser()
+                self.root = os.path.join(root, userloc)
+                self.path = payload['path']
+                self.status = "OK"
+                self.errcode = 0
+            else:
+                self.status = user.status
+                self.errcode = user.errcode
+
+        except:
+            self.status = "Error with payload"
+            self.errcode = 500
+
+    def _path_to_dict(self, path):
+        d = []
+        if os.path.exists(path):
+            for ls in os.listdir(path):
+
+                if not ls.startswith('.'):  # remove hidden file
+                    ls = Path(os.path.join(path, ls))
+                    if os.path.isdir(ls):
+                        d.append(
+                            {'name': os.path.basename(ls), 'type': "directory", 'children': self._path_to_dict(ls)})
+                    else:
+                        d.append({'name': os.path.basename(ls), 'type': "file",
+                                  "last-modification": time.strftime('%Y-%m-%d %H:%M:%S',
+                                                                     time.localtime(ls.stat().st_mtime))})
+            return d
+        else:
+            self.status = "Directory doesn't exist"
+            self.errcode = 404
+            return None
+
+    def _getLoF(self):
+        try:
+            self.status = "OK"
+            self.errcode = 0
+            return self._path_to_dict(os.path.join(self.root,self.path))
+        except:
+            self.status = "Error reading directory"
+            self.errcode = -1
+            return []
+
+    def GetPayload(self):
+        return self._getLoF()
+
+    def isok(self):
+
+        if self.status == "OK":
+            return True
+        else:
+            return False
+
+    def GetStatus(self):
+        status = {
+            'code': self.errcode,
+            'status': self.status
+        }
+        return status
+
+
 class Ls:
 
     def __init__(self, conf, payload, *kwargs):
@@ -85,7 +155,7 @@ class Ls:
                 self.root = os.path.join(root, userloc, path)
                 self.status = "OK"
                 self.errcode = 0
-            else :
+            else:
                 self.status = user.status
                 self.errcode = user.errcode
 

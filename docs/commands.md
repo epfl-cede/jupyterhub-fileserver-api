@@ -14,10 +14,12 @@ Fields :
 - auth_method (string) : authentication method from moodle
 
 ### Test user 
-In order to try the API an user test can be used
+In order to try the API an users tests can be used:
  ``` user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"} ```
+ ``` user: {id:'test2', primary_email:'test2@epfl.ch',auth_method:"test"} ```
+ ``` user: {id:'test3', primary_email:'test3@epfl.ch',auth_method:"test"} ```
 
-**Be careful the ```test```  auth_method is reserved and only this login will work**
+**Be careful the ```test```  auth_method is reserved and only those login will work**
 
 ### Example 
 ```
@@ -115,6 +117,40 @@ Output : A table of :
     }
 }
 ```
+
+## __/lof__ : List recursively the contents of a path for a given user
+Method : GET
+Description : This command list the directories and file for a given path inside an user folder. Directories are scanned recursively
+The desired user and path is given in the command payload
+
+Input :
+- user (string)
+- path (string)
+
+Output : A table of :
+- name (string) : name of the object
+- type (string) : "directory" or "file"
+- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
+- children (json table)  (for directory only) : contents inside this folder 
+
+### Example :
+- Input : 
+```
+{ user: {id:'test2', primary_email:'test2@epfl.ch',auth_method:"test"}, path:"./"}
+```
+
+- Output :
+```
+{
+    "md5_payload": "97aq2BAYEwyOEU3fLUzZtg==",
+    "payload": "[{\"name\": \"one.txt\", \"type\": \"file\", \"last-modification\": \"2020-11-25 13:22:30\"}, {\"name\": \"dir1\", \"type\": \"directory\", \"children\": [{\"name\": \"two.txt\", \"type\": \"file\", \"last-modification\": \"2020-11-25 13:22:41\"}, {\"name\": \"three.txt\", \"type\": \"file\", \"last-modification\": \"2020-11-25 13:22:46\"}]}]",
+    "return": {
+        "code": 0,
+        "status": "OK"
+    }
+}
+```
+
 
 ## __/lod__ : List of directories
 Method : GET

@@ -4,7 +4,7 @@ from flask_restful import Resource, Api
 import logging
 import reusables
 
-from libs.fct_lod import LoD, Ls
+from libs.fct_lod import LoD, Ls, LoF
 from libs.fct_zip import ZfS, UzU
 from libs.fct_output import Output
 from libs.fct_inputs import ValidateInput
@@ -78,6 +78,10 @@ def get_ls():
     cfct = callfct()
     return cfct.run(Ls, request)
 
+@app.route('/lof', methods=['GET'])
+def get_lof():
+    cfct = callfct()
+    return cfct.run(LoF, request)
 
 @app.route('/lod', methods=['GET'])
 def get_lod():
