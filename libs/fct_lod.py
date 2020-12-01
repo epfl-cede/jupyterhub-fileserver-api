@@ -104,9 +104,12 @@ class LoF:
                         d.append(
                             {'name': os.path.basename(ls), 'type': "directory", 'children': self._path_to_dict(ls)})
                     else:
+                        try:
+                            last_mod = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(ls.stat().st_mtime))
+                        except:
+                            last_mod = "unknown"
                         d.append({'name': os.path.basename(ls), 'type': "file",
-                                  "last-modification": time.strftime('%Y-%m-%d %H:%M:%S',
-                                                                     time.localtime(ls.stat().st_mtime))})
+                                  "last-modification": last_mod})
             return d
         else:
             self.status = "Directory doesn't exist"

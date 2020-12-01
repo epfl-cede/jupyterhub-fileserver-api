@@ -133,6 +133,8 @@ Output : A table of :
 - last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
 - children (json table)  (for directory only) : contents inside this folder 
 
+Note : In case the last-modification cannot be determined the value "unknown" is returned
+
 ### Example :
 - Input : 
 ```
