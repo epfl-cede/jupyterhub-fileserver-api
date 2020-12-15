@@ -78,7 +78,7 @@ class moodle2notouser:
         n = notoUser()
         if self.auth_meth == "test":
             if self.email == "test@epfl.ch" and self.id == "test":
-                self.NotoUser = n.userFromAPI('253705', 'pierre-olivier.valles@epfl.ch')
+                self.NotoUser = {"normalised":"test", "uid":"test"}
                 self.status = "OK"
                 self.errcode = 0
             elif self.email == "test2@epfl.ch" and self.id == "test2":

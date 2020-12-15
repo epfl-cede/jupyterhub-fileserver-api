@@ -97,7 +97,6 @@ def get_zfs():
 
 @app.route('/uzu', methods=['POST'])
 def post_uzu():
-    print("here")
     cfct = callfct()
     return cfct.run(UzU, request)
 

@@ -120,8 +120,10 @@ class UzU:
                     self.errcode = 440
                 else:
                     self.blob = files['file']  # payload['blob']
-                    print("blob", self.blob)
-                    self.root = os.path.join(root, userloc, destination)
+                    userroot = os.path.join(root, userloc)
+                    self.access = {'chmod': oct(os.stat(userroot).st_mode)[-3:], 'uid': os.stat(userroot).st_uid,
+                                   'gid': os.stat(userroot).st_gid}
+                    self.root = os.path.join(userroot, destination)
                     self.basename = os.path.join(root)
 
                     self.status = "OK"
@@ -158,6 +160,10 @@ class UzU:
                 self.errcode = 0
                 zip = ZipBlob()
                 zip.PutZip(self.blob, self.root)
+                # apply file permission
+                os.system(f"chown -R {self.access['uid']}:{self.access['gid']} {self.root}")
+                #os.system(f"chmod -R {self.access['chmod']} {self.root}")
+
                 log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
             return {'extractpath': self.root.replace(self.basename, '')}
         except:
