@@ -76,32 +76,14 @@ class moodle2notouser:
             self.status = "Error with user payload"
             self.errcode = 510
         n = notoUser()
-        if self.auth_meth == "test":
-            if self.email == "test@epfl.ch" and self.id == "test":
-                self.NotoUser = {"normalised":"test", "uid":"test"}
-                self.status = "OK"
-                self.errcode = 0
-            elif self.email == "test2@epfl.ch" and self.id == "test2":
-                self.NotoUser = {"normalised":"test2", "uid":"test2"}
-                self.status = "OK"
-                self.errcode = 0
-            elif self.email == "test3@epfl.ch" and self.id == "test3":
-                self.NotoUser = {"normalised":"test3", "uid":"test3"}
-                self.status = "OK"
-                self.errcode = 0
-
-
-            else:
-                self.status = "Error this test user is unknown"
-                self.errcode = 511
-        else:
-            try:
-                self.NotoUser = n.userFromAPI(self.id, self.email)
-                self.status = "OK"
-                self.errcode = 0
-            except:
-                self.status = "Error with notoUser"
-                self.errcode = 515
+        try:
+            self.NotoUser = n.userFromAPI(self.id, self.email)
+            print("USER" , self.NotoUser)
+            self.status = "OK"
+            self.errcode = 0
+        except:
+            self.status = "Error with notoUser"
+            self.errcode = 515
 
     def getNotoUser(self):
         return self.NotoUser['normalised']

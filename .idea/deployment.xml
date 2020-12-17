@@ -5,7 +5,7 @@
       <paths name="fsapi@192.168.132.150:22">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/fsapi/noto-api-dev/" local="$PROJECT_DIR$" />
+            <mapping deploy="/home/fsapi/noto-api-dev2/" local="$PROJECT_DIR$" />
           </mappings>
           <excludedPaths>
             <excludedPath path="venv" />
