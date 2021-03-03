@@ -161,7 +161,7 @@ class UzU:
                 zip = ZipBlob()
                 zip.PutZip(self.blob, self.root)
                 # apply file permission
-                os.system(f"chown -R {self.access['uid']}:{self.access['gid']} {self.root}")
+                os.system(f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'")
                 #os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
                 log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())

@@ -1,6 +1,6 @@
 # Python env (if not installed by [dev](dev.md))
 - Install needed packages (see [packages.md](packages.md))
-- Create env (_venv_ folder) : ``` python3 -m venv venv ```
+- Create env (_venv_ folder) : ``` python3 -m venv --system-site-packages venv ```
 - Activate env : ``` source venv/bin/activate ```
 - Install packages : ``` pip install -r requirements.txt ```
 
