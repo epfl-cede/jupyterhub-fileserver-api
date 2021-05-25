@@ -5,9 +5,14 @@ import hmac
 try:
     from notouser import notoUser
 except ImportError:
-    from dummyUser import notoUser
+    from libs.dummyUser import notoUser
 
-from cedelogger import cedeLogger
+try:
+    from cedelogger import cedeLogger
+
+    customLogger = True
+except ImportError:
+    customLogger = False
 import logging
 
 
@@ -91,7 +96,6 @@ class moodle2notouser:
         n = notoUser()
         try:
             self.NotoUser = n.userFromAPI(self.id, self.email)
-            print("USER", self.NotoUser)
             self.status = "OK"
             self.errcode = 0
         except Exception as e:
@@ -107,11 +111,14 @@ class moodle2notouser:
 
 class SendLog:
     """
-    This class is used to send log to noto syslog
+    This class is used to send log to noto syslog if available
     """
 
     def __init__(self):
-        self.logger = cedeLogger(tag="fsapi")
+        if customLogger:
+            self.logger = cedeLogger(tag="fsapi")
+        else:
+            self.logger = logging.getLogger()
 
     def write(self, event, action, userid):
         self.logger.log(
