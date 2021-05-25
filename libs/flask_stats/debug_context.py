@@ -1,13 +1,14 @@
 import sys
 
-class debug_context():
-    """ Debug context to trace any function calls inside the context """
+
+class debug_context:
+    """Debug context to trace any function calls inside the context"""
 
     def __init__(self, name):
         self.name = name
 
     def __enter__(self):
-        print('Entering Debug Decorated func')
+        print("Entering Debug Decorated func")
         # Set the trace function to the trace_calls function
         # So all events are now traced
         sys.settrace(self.trace_calls)
@@ -18,7 +19,7 @@ class debug_context():
 
     def trace_calls(self, frame, event, arg):
         # We want to only trace our call to the decorated function
-        if event != 'call':
+        if event != "call":
             return
         elif frame.f_code.co_name != self.name:
             return
@@ -31,11 +32,11 @@ class debug_context():
         # keep the check for the event 'line'
         # If you want to print local variables only on return
         # check only for the 'return' event
-        if event not in ['line', 'return']:
+        if event not in ["line", "return"]:
             return
         co = frame.f_code
         func_name = co.co_name
         line_no = frame.f_lineno
-        filename = co.co_filename
+        # filename = co.co_filename
         local_vars = frame.f_locals
-        print('  {0} {1} {2} locals: {3}'.format(func_name, event, line_no, local_vars))
+        print("  {0} {1} {2} locals: {3}".format(func_name, event, line_no, local_vars))

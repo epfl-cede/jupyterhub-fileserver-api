@@ -2,7 +2,6 @@ from io import BytesIO
 import zipfile
 import os
 import json
-from werkzeug.utils import secure_filename
 import base64
 
 from libs.fct_global import moodle2notouser, SendLog
@@ -20,18 +19,18 @@ class ZipBlob:
         :return: base 64 blob of zip
         """
         memory_file = BytesIO()
-        with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk(path):
                 for file in files:
                     filepath = os.path.join(root, file)
-                    archivepath = filepath.replace(path, '')
+                    archivepath = filepath.replace(path, "")
                     zipf.write(filepath, archivepath)
         memory_file.seek(0)
         return base64.b64encode(memory_file.read()).decode("utf-8")
 
     def PutZip(self, blob, path):
         memory_file = BytesIO(blob.read())  # BytesIO(base64.b64decode(blob))
-        with zipfile.ZipFile(memory_file, 'r') as zipf:
+        with zipfile.ZipFile(memory_file, "r") as zipf:
             os.chdir(path)
             zipf.extractall()
 
@@ -45,11 +44,11 @@ class ZfS:
         try:
             root = conf.homeroot
             payload = json.loads(payload)
-            self.user = moodle2notouser(payload['user'])
+            self.user = moodle2notouser(payload["user"])
 
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
-                folder = payload['folder']
+                folder = payload["folder"]
                 self.root = os.path.join(root, userloc, folder)
                 self.origin = os.path.join(userloc, folder)
                 if not os.path.exists(self.root):
@@ -62,8 +61,8 @@ class ZfS:
                 self.status = self.user.status
                 self.errcode = self.user.errcode
 
-        except:
-            self.status = "Error with payload"
+        except Exception as e:
+            self.status = "Error with payload: {0}".format(e)
             self.errcode = 500
 
     def _getZfS(self):
@@ -74,9 +73,14 @@ class ZfS:
             zip = ZipBlob()
             blob = zip.GetZip(self.root)
             log.write("Zfs SUCCESS", "from : " + self.root, self.user.getNotoUserid())
-            return {'origin': self.origin, 'blob': blob, "method": "base64", "mime": "application/zip"}
-        except:
-            self.status = "Error : zip is not working in this directory"
+            return {
+                "origin": self.origin,
+                "blob": blob,
+                "method": "base64",
+                "mime": "application/zip",
+            }
+        except Exception as e:
+            self.status = "Error: zip is not working in this directory: {0}".format(e)
             self.errcode = -1
             log.write("Zfs FAILED", "from : " + self.root, self.user.getNotoUserid())
             return []
@@ -92,10 +96,7 @@ class ZfS:
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status
 
 
@@ -108,10 +109,10 @@ class UzU:
         try:
             root = conf.homeroot
             payload = json.loads(payload)
-            self.user = moodle2notouser(payload['user'])
+            self.user = moodle2notouser(payload["user"])
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
-                destination = payload['destination']
+                destination = payload["destination"]
                 if destination == ".":
                     self.status = "Error : destination is not defined"
                     self.errcode = 500
@@ -119,10 +120,13 @@ class UzU:
                     self.status = "Error : destination does not exist"
                     self.errcode = 440
                 else:
-                    self.blob = files['file']  # payload['blob']
+                    self.blob = files["file"]  # payload['blob']
                     userroot = os.path.join(root, userloc)
-                    self.access = {'chmod': oct(os.stat(userroot).st_mode)[-3:], 'uid': os.stat(userroot).st_uid,
-                                   'gid': os.stat(userroot).st_gid}
+                    self.access = {
+                        "chmod": oct(os.stat(userroot).st_mode)[-3:],
+                        "uid": os.stat(userroot).st_uid,
+                        "gid": os.stat(userroot).st_gid,
+                    }
                     self.root = os.path.join(userroot, destination)
                     self.basename = os.path.join(root)
 
@@ -133,8 +137,8 @@ class UzU:
                 self.status = self.user.status
                 self.errcode = self.user.errcode
 
-        except:
-            self.status = "Error with payload"
+        except Exception as e:
+            self.status = "Error with payload: {0}".format(e)
             self.errcode = 500
 
     def _checkdest(self):
@@ -161,13 +165,20 @@ class UzU:
                 zip = ZipBlob()
                 zip.PutZip(self.blob, self.root)
                 # apply file permission
-                os.system(f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'")
-                #os.system(f"chmod -R {self.access['chmod']} {self.root}")
+                os.chown(self.root, self.access["uid"], self.access["gid"])
+                # os.system(
+                #     f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
+                # )
+                # os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
-                log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
-            return {'extractpath': self.root.replace(self.basename, '')}
-        except:
-            self.status = "Error : zip extract not working in this directory"
+                log.write(
+                    "Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid()
+                )
+            return {"extractpath": self.root.replace(self.basename, "")}
+        except Exception as e:
+            self.status = (
+                "Error: zip extract not working in this directory: {0}".format(e)
+            )
             self.errcode = -1
             log.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
             return []
@@ -183,8 +194,5 @@ class UzU:
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status

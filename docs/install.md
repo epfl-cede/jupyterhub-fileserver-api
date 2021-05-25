@@ -4,7 +4,7 @@
 - Activate env : ``` source venv/bin/activate ```
 - Install packages : ``` pip install -r requirements.txt ```
 
-# Test 
+# Test
 - ```flask run``` should finish with ```* Running on http://127.0.0.1:5000/ (Press CTRL+C to quit) ```
 - ``` gunicorn app:app  ``` should start
 
@@ -19,4 +19,3 @@
 
 - api Status : ```sudo systemctl status notoapi```
 - Stop api : ```sudo systemctl stop notoapi```
-

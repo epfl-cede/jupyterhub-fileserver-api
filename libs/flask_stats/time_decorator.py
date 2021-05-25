@@ -2,12 +2,13 @@ from functools import wraps
 
 
 def time_decorator(func):
-    """ Debug decorator to call the function within the time context """
+    """Debug decorator to call the function within the time context"""
 
     @wraps(func)
     def decorated_func(*args, **kwargs):
 
         import line_profiler
+
         profile = line_profiler.LineProfiler()
 
         f = profile(func)
@@ -16,5 +17,5 @@ def time_decorator(func):
         profile.print_stats()
 
         return return_value
-    return decorated_func
 
+    return decorated_func

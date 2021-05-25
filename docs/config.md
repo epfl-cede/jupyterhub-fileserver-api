@@ -18,16 +18,16 @@ __Configuration is done in ```config.json``` file__
 }
 ```
 
-## auth 
+## auth
 Table of user and key for accessing API
 
 ## ttl
-TimeToLive : time validity of the request (in seconds) 
+TimeToLive : time validity of the request (in seconds)
 
 ## root
 Path to the root of user directories
 
 
-# Changing the production port 
+# Changing the production port
 
 Edit ```systemd/notoapi.service``` and change the port in the ```gunicorn``` command.

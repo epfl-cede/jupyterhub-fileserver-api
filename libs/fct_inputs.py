@@ -3,11 +3,12 @@ import time
 from libs.fct_global import CalcMd5, CalcHmac
 
 
-class ValidateInput():
-    def __init__(self, request, auth, ttl):
+class ValidateInput:
+    def __init__(self, request, auth, ttl, apikey):
         self.request = request
         self.auth = auth
         self.ttl = ttl
+        self.apikey = apikey
         self.status = None
         self.errcode = None
         self.valid = None
@@ -16,14 +17,27 @@ class ValidateInput():
         self.valid = False
         if self._validate_request():
             try:
-                user = self.request['user']
-                timestamp = int(self.request['timestamp'])
-                if self.auth.CheckUser(user):  # check that user exist
-                    if time.time() - timestamp <= self.ttl:  # check that timing is in the ttl range
-                        md5 = CalcMd5(request=self.request)
-                        if self.request['md5_payload'] == md5.md5_payload():  # check that payload has correct md5
-                            hmac = CalcHmac(request=self.request, key=self.auth.UserKey(user))
-                            if self.request['key'] == hmac.getHmac():  # check key encryption
+                if self.apikey is not None:
+                    user = self.request["user"]
+                    if not self.auth.CheckUser(user):
+                        self.status = "Error : user is unknown"
+                        self.errcode = 101
+                        return False
+
+                timestamp = int(self.request["timestamp"])
+                if time.time() - timestamp <= self.ttl:
+                    # check that timing is in the ttl range
+                    md5 = CalcMd5(request=self.request)
+                    if self.request["md5_payload"] == md5.md5_payload():
+                        # Skip if api key is set, because no requesting user
+                        if self.apikey is not None:
+                            # check that payload has correct md5
+                            hmac = CalcHmac(
+                                request=self.request, key=self.auth.UserKey(user)
+                            )
+                            if (
+                                self.request["key"] == hmac.getHmac()
+                            ):  # check key encryption
                                 self.status = "OK"
                                 self.errcode = 0
                                 return True
@@ -31,29 +45,30 @@ class ValidateInput():
                                 self.status = "Error : checking hmac"
                                 self.errcode = 104
                                 return False
-                        else:
-                            self.status = "Error : checking md5 payload"
-                            self.errcode = 103
-                            return False
                     else:
-                        self.status = "Error : checking timestamp increase ttl if persist"
-                        self.errcode = 102
+                        self.status = "Error : checking md5 payload"
+                        self.errcode = 103
                         return False
                 else:
-                    self.status = "Error : user is unknown"
-                    self.errcode = 101
+                    self.status = "Error : checking timestamp increase ttl if persist"
+                    self.errcode = 102
                     return False
-            except:
-                self.status = "Error : treating the request"
+            except Exception as e:
+                self.status = "Error : treating the request: {}".format(e)
                 self.errcode = -1
                 return False
         else:
-            self.status = "Error : the request is not formatted correctly : " + self.status
+            self.status = (
+                "Error : the request is not formatted correctly : " + self.status
+            )
             self.errcode = 100
             return False
 
     def _validate_request(self):
-        keys = ['user', 'timestamp', 'payload', 'md5_payload', 'key']
+        if self.apikey is None:
+            keys = ["user", "timestamp", "payload", "md5_payload", "key"]
+        else:
+            keys = ["apikey", "timestamp", "payload", "md5_payload"]
 
         for key in keys:
             if key not in self.request:
@@ -69,8 +84,5 @@ class ValidateInput():
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status

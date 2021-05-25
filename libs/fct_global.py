@@ -1,8 +1,12 @@
 import base64
-import hashlib, hmac
+import hashlib
+import hmac
 
-import json
-from notouser import notoUser
+try:
+    from notouser import notoUser
+except ImportError:
+    from dummyUser import notoUser
+
 from cedelogger import cedeLogger
 import logging
 
@@ -19,11 +23,13 @@ class CalcHmac:
         :param key: secret key for this user
         """
 
-        self.payload = request['payload']
-        self.user = request['user']
+        self.payload = request["payload"]
+        self.user = request["user"]
         self.key = key
-        self.timestamp = request['timestamp']
-        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest()).decode('utf-8')
+        self.timestamp = request["timestamp"]
+        self.md5_payload = base64.b64encode(
+            hashlib.md5(self.payload.encode("utf-8")).digest()  # nosec
+        ).decode("utf-8")
         self.hmac = None
 
     def getHmac(self):
@@ -34,9 +40,14 @@ class CalcHmac:
 
         string = self.user + self.timestamp + self.md5_payload
         self.hmac = base64.b64encode(
-            hmac.new(self.key.encode('utf-8'), string.encode('utf-8'), digestmod=hashlib.sha256).digest())
+            hmac.new(
+                self.key.encode("utf-8"),
+                string.encode("utf-8"),
+                digestmod=hashlib.sha256,
+            ).digest()
+        )
 
-        return self.hmac.decode('utf-8')
+        return self.hmac.decode("utf-8")
 
 
 class CalcMd5:
@@ -51,15 +62,17 @@ class CalcMd5:
         :param key: secret key for this user
         """
 
-        self.payload = request['payload']
+        self.payload = request["payload"]
 
     def md5_payload(self):
         """
         Calculate the md5 of the payload
         :return: base64 md5(payload)
         """
-        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest())
-        return self.md5_payload.decode('utf-8')
+        self.md5_payload = base64.b64encode(
+            hashlib.md5(self.payload.encode("utf-8")).digest()  # nosec
+        )
+        return self.md5_payload.decode("utf-8")
 
 
 class moodle2notouser:
@@ -69,27 +82,27 @@ class moodle2notouser:
 
     def __init__(self, userpayload):
         try:
-            self.id = userpayload['id']
-            self.email = userpayload['primary_email']
-            self.auth_meth = userpayload['auth_method']
-        except:
-            self.status = "Error with user payload"
+            self.id = userpayload["id"]
+            self.email = userpayload["primary_email"]
+            self.auth_meth = userpayload["auth_method"]
+        except Exception as e:
+            self.status = "Error with user payload: {0}".format(e)
             self.errcode = 510
         n = notoUser()
         try:
             self.NotoUser = n.userFromAPI(self.id, self.email)
-            print("USER" , self.NotoUser)
+            print("USER", self.NotoUser)
             self.status = "OK"
             self.errcode = 0
-        except:
-            self.status = "Error with notoUser"
+        except Exception as e:
+            self.status = "Error with notoUser: {0}".format(e)
             self.errcode = 515
 
     def getNotoUser(self):
-        return self.NotoUser['normalised']
+        return self.NotoUser["normalised"]
 
     def getNotoUserid(self):
-        return self.NotoUser['uid']
+        return self.NotoUser["uid"]
 
 
 class SendLog:
@@ -98,7 +111,9 @@ class SendLog:
     """
 
     def __init__(self):
-        self.logger = cedeLogger(tag='fsapi')
+        self.logger = cedeLogger(tag="fsapi")
 
     def write(self, event, action, userid):
-        self.logger.log({'event': event, 'action': action, 'uid': userid}, level=logging.CRITICAL)
+        self.logger.log(
+            {"event": event, "action": action, "uid": userid}, level=logging.CRITICAL
+        )
