@@ -45,5 +45,5 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            bengig/jupyterhub-fileserver-api:devel
+            bengig/jupyterhub-fileserver-api:kubernetes
             bengig/jupyterhub-fileserver-api:${{ env.SHA }}
