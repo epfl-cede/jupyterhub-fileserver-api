@@ -158,30 +158,48 @@ class UzU:
 
     def _postUzU(self):
         log = SendLog()
-        try:
-            if self._checkdest():
-                self.status = "OK"
-                self.errcode = 0
-                zip = ZipBlob()
+        if self._checkdest():
+            self.status = "OK"
+            self.errcode = 0
+            zip = ZipBlob()
+            try:
                 zip.PutZip(self.blob, self.root)
-                # apply file permission
-                os.chown(self.root, self.access["uid"], self.access["gid"])
+            except Exception as e:
+                self.status = (
+                    "Error: zip extract not working in this directory: {0}".format(e)
+                )
+                self.errcode = -1
+                log.write(
+                    "Uzu FAILED", "from : " + self.root, self.user.getNotoUserid()
+                )
+                return []
+
+            # apply file permission; skip on Windows
+            if os.name != "nt":
+                # safer to not use shell call
+                for root, dirs, files in os.walk(self.root):
+                    for loc in dirs:
+                        os.chown(
+                            os.path.join(root, loc),
+                            self.access["uid"],
+                            self.access["gid"],
+                        )
+                    for loc in files:
+                        os.chown(
+                            os.path.join(root, loc),
+                            self.access["uid"],
+                            self.access["gid"],
+                        )
                 # os.system(
                 #     f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
                 # )
                 # os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
-                log.write(
-                    "Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid()
-                )
+            log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
             return {"extractpath": self.root.replace(self.basename, "")}
-        except Exception as e:
-            self.status = (
-                "Error: zip extract not working in this directory: {0}".format(e)
-            )
-            self.errcode = -1
-            log.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
-            return []
+
+        log.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
+        return []
 
     def GetPayload(self):
         return self._postUzU()
