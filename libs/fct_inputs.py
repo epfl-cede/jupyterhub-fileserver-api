@@ -3,11 +3,10 @@ from libs.fct_global import CalcMd5, CalcHmac
 
 
 class ValidateInput:
-    def __init__(self, request, auth, ttl, apikey):
+    def __init__(self, request, auth, ttl):
         self.request = request
         self.auth = auth
         self.ttl = ttl
-        self.apikey = apikey
         self.status = None
         self.errcode = None
         self.valid = None
@@ -19,17 +18,16 @@ class ValidateInput:
                 user = self.request["user"]
                 timestamp = int(self.request["timestamp"])
                 if self.auth.CheckUser(user):  # check that user exist
+                    # check that timing is in the ttl range
                     if time.time() - timestamp <= self.ttl:
-                        # check that timing is in the ttl range
                         md5 = CalcMd5(request=self.request)
+                        # check that payload has correct md5
                         if self.request["md5_payload"] == md5.md5_payload():
-                            # check that payload has correct md5
                             hmac = CalcHmac(
                                 request=self.request, key=self.auth.UserKey(user)
                             )
-                            if (
-                                self.request["key"] == hmac.getHmac()
-                            ):  # check key encryption
+                            # check key encryption
+                            if self.request["key"] == hmac.getHmac():
                                 self.status = "OK"
                                 self.errcode = 0
                                 return True
@@ -47,6 +45,10 @@ class ValidateInput:
                         )
                         self.errcode = 102
                         return False
+                else:
+                    self.status = "Error : authentication failed"
+                    self.errcode = 401
+                    return False
             except Exception as e:
                 self.status = "Error : treating the request: {}".format(e)
                 self.errcode = -1
@@ -58,15 +60,8 @@ class ValidateInput:
             self.errcode = 100
             return False
 
-        self.status = "OK"
-        self.errcode = 0
-        return True
-
     def _validate_request(self):
-        if self.apikey is None:
-            keys = ["user", "timestamp", "payload", "md5_payload", "key"]
-        else:
-            keys = ["apikey", "timestamp", "payload", "md5_payload"]
+        keys = ["user", "timestamp", "payload", "md5_payload", "key"]
 
         for key in keys:
             if key not in self.request:

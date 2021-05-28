@@ -5,10 +5,9 @@ import logging
 
 class ConfigFile:
     def __init__(self, filename):
-        self.auth = ""
+        self.auth = []
         self.ttl = 30
         self.homeroot = ""
-        self.apikey = None
         config_file_present = False
         try:
             # TODO: path to config file
@@ -25,7 +24,9 @@ class ConfigFile:
             self.allget = False  # self.configjson['allget']
 
         # Overwrite configuration if environment variables are set
-        self.auth = os.getenv("AUTH", self.auth)
+        user = os.getenv("AUTH_USER")
+        key = os.getenv("AUTH_KEY")
+        if user is not None and key is not None:
+            self.auth.append({"user": user, "key": key})
         self.homeroot = os.getenv("HOMEROOT", self.homeroot)
         self.ttl = int(os.getenv("TTL", self.ttl))
-        self.apikey = os.getenv("APIKEY", self.apikey)

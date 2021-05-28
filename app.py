@@ -30,7 +30,7 @@ class callfct(Resource):
         if debug:
             log.debug(request.args)
 
-        validate = ValidateInput(request.args, auth, ttl=conf.ttl, apikey=conf.apikey)
+        validate = ValidateInput(request.args, auth, ttl=conf.ttl)
         if validate.validate() and validate.isok():
             if debug:
                 log.debug("request is valid")
