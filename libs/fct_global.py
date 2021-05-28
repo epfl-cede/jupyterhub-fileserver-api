@@ -117,10 +117,12 @@ class SendLog:
     def __init__(self):
         if customLogger:
             self.logger = cedeLogger(tag="fsapi")
-        else:
-            self.logger = logging.getLogger()
+        # else:
+        #     self.logger = logging.getLogger()
 
     def write(self, event, action, userid):
-        self.logger.log(
-            {"event": event, "action": action, "uid": userid}, level=logging.CRITICAL
-        )
+        if customLogger:
+            self.logger.log(
+                {"event": event, "action": action, "uid": userid},
+                level=logging.CRITICAL,
+            )
