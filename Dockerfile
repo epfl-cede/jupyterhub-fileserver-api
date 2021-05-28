@@ -14,4 +14,3 @@ RUN chown 1000 /app
 USER 1000
 ENV FLASK_CONFIG=production
 CMD gunicorn -b 0.0.0.0:8080 -w 4 app:app
-
