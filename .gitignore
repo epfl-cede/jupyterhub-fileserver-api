@@ -7,3 +7,5 @@
 /.stats.db
 
 libs/__pycache__/
+**/.coverage
+/htmlcov

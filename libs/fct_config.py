@@ -13,7 +13,7 @@ class ConfigFile:
             # TODO: path to config file
             self.configjson = json.load(open(filename))
             config_file_present = True
-        except FileNotFoundError:
+        except FileNotFoundError:  # pragma: no cover
             logging.debug("No config file found")
             pass
 

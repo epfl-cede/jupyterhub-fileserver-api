@@ -49,7 +49,7 @@ class ValidateInput:
                     self.status = "Error : authentication failed"
                     self.errcode = 401
                     return False
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 self.status = "Error : treating the request: {}".format(e)
                 self.errcode = -1
                 return False
