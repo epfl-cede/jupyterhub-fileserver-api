@@ -18,6 +18,7 @@ debug = True
 
 conf = ConfigFile("config.json")
 
+
 app = Flask(__name__)
 api = Api(app)
 Stats(app)

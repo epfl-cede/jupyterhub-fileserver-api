@@ -21,7 +21,7 @@ class ValidateInput:
                     # check that timing is in the ttl range
                     if time.time() - timestamp <= self.ttl:
                         md5 = CalcMd5(request=self.request)
-                        # check that payload has correct md5
+                        # check that payload has correct md5 (over payload) and hmac (includes secret)
                         if self.request["md5_payload"] == md5.md5_payload():
                             hmac = CalcHmac(
                                 request=self.request, key=self.auth.UserKey(user)

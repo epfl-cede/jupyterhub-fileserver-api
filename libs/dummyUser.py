@@ -1,6 +1,6 @@
 class notoUser:
     """
-    Mockup class to fake the EPFL notouser library
+    Mockup class to fake the EPFL notouser library. For a given ID, just returns this ID.
     """
 
     def __init__(self):
@@ -14,5 +14,5 @@ class notoUser:
         :param id: THE id, user identification from IAM
         :param email: 2nd argument for validation?
         """
-        user = {"normalised": "130", "uid": "130"}
+        user = {"normalised": id, "uid": id}
         return user
