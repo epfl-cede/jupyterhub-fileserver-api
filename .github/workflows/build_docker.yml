@@ -10,6 +10,38 @@ on:
       - kubernetes
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install pre-commit
+          pre-commit init
+          pre-commit run --all-files
+
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [ 3.6, 3.7, 3.8, 3.9 ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r tests/requirements.txt
+      - name: Run pytest
+        run: |
+          pytest
 
   docker_push:
     runs-on: ubuntu-latest
