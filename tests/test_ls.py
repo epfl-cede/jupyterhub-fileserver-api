@@ -43,6 +43,6 @@ def test_ls(client):
     # Test return code
     assert data["return"]["code"] == 0
     # Test if directory appears
-    assert payload[1]["name"] == "testdir"
+    assert payload[0]["name"] == "testdir" or payload[1]["name"] == "testdir"
     # Test md5 checksum
     assert md5_response == md5_payload
