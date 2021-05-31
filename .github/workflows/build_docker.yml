@@ -30,6 +30,10 @@ jobs:
   pytest:
     runs-on: ubuntu-latest
     needs: lint
+    env:
+      HOMEROOT: /tmp
+      AUTH_USER: "00000000"
+      AUTH_KEY: "11111111"
     strategy:
       matrix:
         python-version: [ 3.6, 3.7, 3.8, 3.9 ]

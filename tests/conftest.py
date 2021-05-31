@@ -4,7 +4,7 @@ import os
 import shutil
 
 
-auth = {"user": "Szt7TQpqbCQHpCg0", "key": "pHV2QrraLMVPb6Ns"}
+auth = {"user": "00000000", "key": "11111111"}
 
 user_string = '{"id":"test2","primary_email":"test2@epfl.ch","auth_method":"test"}'
 
