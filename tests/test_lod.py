@@ -1,4 +1,4 @@
-from tests.config import auth, user_string
+from tests.conftest import auth, user_string
 import datetime
 import urllib.parse
 import json

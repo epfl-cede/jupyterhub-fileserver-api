@@ -1,4 +1,5 @@
-__Configuration is done in ```config.json``` file__
+__Configuration is done in ```config.json``` file, and may be
+overwritten with environment variables.__
 
 # ```config.json``` file
 ## Example of ```config.json```
@@ -24,8 +25,12 @@ Table of user and key for accessing API
 ## ttl
 TimeToLive : time validity of the request (in seconds)
 
+Env variable: `TTL`
+
 ## root
-Path to the root of user directories
+Path to the root of user directories.
+
+Env variable: `HOMEROOT`
 
 
 # Changing the production port

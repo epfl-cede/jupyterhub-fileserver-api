@@ -43,7 +43,7 @@ jobs:
           pip3 install -r tests/requirements.txt
       - name: Run pytest
         run: |
-          pytest
+          coverage run -m pytest
 
   docker_push:
     runs-on: ubuntu-latest

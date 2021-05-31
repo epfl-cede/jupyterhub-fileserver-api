@@ -12,6 +12,9 @@ user_string = '{"id":"test2","primary_email":"test2@epfl.ch","auth_method":"test
 # Test setup
 @pytest.fixture(scope="module")
 def client():
+    """
+    Setup of test client and test files
+    """
     app.testing = True
     home = os.getenv("HOMEROOT")
     path = os.path.join(home, "test2")
