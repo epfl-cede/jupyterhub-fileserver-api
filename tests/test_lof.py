@@ -42,8 +42,13 @@ def test_lof(client):
 
     # Test return code
     assert data["return"]["code"] == 0
-    # Test if directory appears
-    assert payload[0]["name"] == "aaa.txt"
-    assert payload[1]["children"][0]["name"] == "testfile.txt"
+    # Test if directory and files appear
+    if payload[0]["name"] == "testdir":
+        assert payload[0]["children"][0]["name"] == "testfile.txt"
+        assert payload[1]["name"] == "aaa.txt"
+    else:
+        assert payload[1]["children"][0]["name"] == "testfile.txt"
+        assert payload[0]["name"] == "aaa.txt"
+
     # Test md5 checksum
     assert md5_response == md5_payload
