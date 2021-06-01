@@ -184,8 +184,8 @@ class UzU:
                             self.access["uid"],
                             self.access["gid"],
                         )
-                    # Fails in Kubernetes; there we have set uid/gid to the same values as used in
-                    # Jupyter notebook containers.
+                    # Fails in Kubernetes, we're not root; there we have set uid/gid
+                    # to the same values as used in  Jupyter notebook containers.
                     # TODO: do we need a configuration to trigger?
                     try:
                         for loc in files:

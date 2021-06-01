@@ -10,7 +10,7 @@ except ImportError:
 try:
     from cedelogger import cedeLogger
 
-    customLogger = True
+    customLogger = True  # pragma: no cover
 except ImportError:
     customLogger = False
 import logging
@@ -116,7 +116,7 @@ class SendLog:
 
     def __init__(self):
         if customLogger:
-            self.logger = cedeLogger(tag="fsapi")
+            self.logger = cedeLogger(tag="fsapi")  # pragma: no cover
         # else:
         #     self.logger = logging.getLogger()
 
@@ -125,4 +125,4 @@ class SendLog:
             self.logger.log(
                 {"event": event, "action": action, "uid": userid},
                 level=logging.CRITICAL,
-            )
+            )  # pragma: no cover

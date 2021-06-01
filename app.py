@@ -12,7 +12,8 @@ from libs.fct_auth import Auth
 from libs.fct_config import ConfigFile
 from libs.flask_stats.flask_stats import Stats
 
-log = reusables.get_logger("main", level=logging.DEBUG)
+# Changed from get_logger, deprecation warning
+log = reusables.setup_logger("main", level=logging.DEBUG)
 
 debug = True
 
@@ -109,5 +110,5 @@ def post_uzu():
     return cfct.run(UzU, request)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: nocover
     app.run()
