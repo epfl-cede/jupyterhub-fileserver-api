@@ -11,6 +11,7 @@ RUN pip install -r requirements.txt
 
 EXPOSE 8080/tcp
 RUN chown 1000 /app
-USER 1000:100
+RUN useradd -r -u 1000 -g users jovyan
+USER jovyan:users
 ENV FLASK_CONFIG=production
 CMD gunicorn -b 0.0.0.0:8080 -w 4 app:app
