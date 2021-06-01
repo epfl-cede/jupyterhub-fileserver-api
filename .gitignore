@@ -9,3 +9,4 @@
 libs/__pycache__/
 **/.coverage
 /htmlcov
+/.idea/misc.xml
