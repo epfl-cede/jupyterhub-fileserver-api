@@ -74,6 +74,11 @@ def hello():
     return output.generate()
 
 
+@app.route("/healthz")
+def healthz():
+    return "OK"
+
+
 @app.route("/ls", methods=["GET"])
 def get_ls():
     cfct = callfct()
