@@ -56,7 +56,7 @@ class Stats:
             logging.info("after_request %s of %s" % (response, request))
 
             duration = time.time() - request.cookies["request_time"]
-            logging.info("request_time %s" % (duration))
+            logging.info("request_time %s" % duration)
 
             r = RecordRequest(
                 uri=request.path, response_code=response.status_code, duration=duration

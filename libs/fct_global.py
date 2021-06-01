@@ -66,7 +66,7 @@ class CalcMd5:
         :param request: dict with request arguments
         :param key: secret key for this user
         """
-
+        self.md5 = ""
         self.payload = request["payload"]
 
     def md5_payload(self):
@@ -74,10 +74,10 @@ class CalcMd5:
         Calculate the md5 of the payload
         :return: base64 md5(payload)
         """
-        self.md5_payload = base64.b64encode(
+        self.md5 = base64.b64encode(
             hashlib.md5(self.payload.encode("utf-8")).digest()  # nosec
         )
-        return self.md5_payload.decode("utf-8")
+        return self.md5.decode("utf-8")
 
 
 class moodle2notouser:

@@ -10,7 +10,6 @@ def test_stats(client):
 
 
 def test_endpoint_stats(client):
-    rv = client.get("/")
     rv = client.get("/endpoints_stats")
     data = json.loads(rv.data)
 
