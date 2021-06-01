@@ -28,3 +28,11 @@ fix some issues and reformat code.
 - Install (in venv): ```pip install pre-commit```
 - Init: ```pre-commit init```
 - Run manually: ```pre-commit run --all-files```
+
+# Tests
+Install modules from `tests/requirements.txt` to your venv first.
+
+Run tests with `python -m pytest` to have the current directory in `sys.path`.
+
+Generate test coverage reports with `coverage run -m pytest` and `coverage report`
+or `coverage html`.
