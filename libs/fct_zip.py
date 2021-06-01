@@ -184,12 +184,19 @@ class UzU:
                             self.access["uid"],
                             self.access["gid"],
                         )
-                    for loc in files:
-                        os.chown(
-                            os.path.join(root, loc),
-                            self.access["uid"],
-                            self.access["gid"],
-                        )
+                    # Fails in Kubernetes; there we have set uid/gid to the same values as used in
+                    # Jupyter notebook containers.
+                    # TODO: do we need a configuration to trigger?
+                    try:
+                        for loc in files:
+                            os.chown(
+                                os.path.join(root, loc),
+                                self.access["uid"],
+                                self.access["gid"],
+                            )
+                    except PermissionError:
+                        pass
+
                 # os.system(
                 #     f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
                 # )
