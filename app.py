@@ -54,7 +54,10 @@ class callfct(Resource):
                     return output.generate()
                 else:
                     if debug:
-                        log.debug("error with payload in callfct")
+                        log.debug(
+                            "error with payload in callfct: {0}".format(Ccommand.status)
+                        )
+                        log.debug("Payload: {0}".format(payload))
                     output.SetStatus(Ccommand.GetStatus())
                     return output.generate()
 
