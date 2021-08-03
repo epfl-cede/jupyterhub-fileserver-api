@@ -178,12 +178,6 @@ class UzU:
             if os.name != "nt":
                 # safer to not use shell call
                 for root, dirs, files in os.walk(self.root):
-                    for loc in dirs:
-                        os.chown(
-                            os.path.join(root, loc),
-                            self.access["uid"],
-                            self.access["gid"],
-                        )
                     # Fails in Kubernetes, we're not root; there we have set uid/gid
                     # to the same values as used in  Jupyter notebook containers.
                     # TODO: do we need a configuration to trigger?
