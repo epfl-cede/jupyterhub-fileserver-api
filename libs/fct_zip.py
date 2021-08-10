@@ -162,12 +162,18 @@ class UzU:
             self.status = "OK"
             self.errcode = 0
             zip = ZipBlob()
+
             try:
                 zip.PutZip(self.blob, self.root)
             except Exception as e:
-                self.status = (
-                    "Error: zip extract not working in this directory: {0}".format(e)
-                )
+                if len(self.blob) == 0:
+                    self.status = "Error: zip blob size is 0"
+                else:
+                    self.status = (
+                        "Error: zip extract not working in this directory: {0}".format(
+                            e
+                        )
+                    )
                 self.errcode = -1
                 log.write(
                     "Uzu FAILED", "from : " + self.root, self.user.getNotoUserid()

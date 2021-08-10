@@ -8,6 +8,8 @@ on:
   push:
     branches:
       - kubernetes
+    tags:
+      - "*"
 
 jobs:
   lint:
