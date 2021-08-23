@@ -14,6 +14,12 @@ class LoD:
             user = moodle2notouser(payload["user"])
             if user.errcode == 0:
                 userloc = user.getNotoUser()
+                if userloc == "":
+                    # Never return with an empty user path, would allow access to all user directories
+                    self.status = "Empty user path rejected"
+                    self.errcode = 500
+                    self.root = os.path.join(root, "invalid_path")
+                    return
                 self.root = os.path.join(root, userloc)
                 self.status = "OK"
                 self.errcode = 0
@@ -74,6 +80,12 @@ class LoF:
 
             if user.errcode == 0:
                 userloc = user.getNotoUser()
+                if userloc == "":
+                    # Never return with an empty user path, would allow access to all user directories
+                    self.status = "Empty user path rejected"
+                    self.errcode = 500
+                    self.root = os.path.join(root, "invalid_path")
+                    return
                 self.root = os.path.join(root, userloc)
                 self.path = payload["path"]
                 self.status = "OK"
@@ -155,6 +167,12 @@ class Ls:
 
             if user.errcode == 0:
                 userloc = user.getNotoUser()
+                if userloc == "":
+                    # Never return with an empty user path, would allow access to all user directories
+                    self.status = "Empty user path rejected"
+                    self.errcode = 500
+                    self.root = os.path.join(root, "invalid_path")
+                    return
                 path = payload["path"]
                 self.root = os.path.join(root, userloc, path)
                 self.status = "OK"
