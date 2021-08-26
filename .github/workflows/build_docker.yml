@@ -69,15 +69,21 @@ jobs:
       -
         name: Checkout repository
         uses: actions/checkout@v2
+
       -
-        name: Get short SHA
-        uses: benjlevesque/short-sha@v1.2
-        id: short-sha
-      -
-        name: Store short SHA as environment variable
-        run: echo $SHA
-        env:
-          SHA: ${{ steps.short-sha.outputs.sha }}
+        name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: bengig/jupyterhub-fileserver-api
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
       -
         # TODO: push to non-personal repository
         name: Build and push
@@ -86,7 +92,6 @@ jobs:
         with:
           context: .
           file: ./Dockerfile
-          push: true
-          tags: |
-            bengig/jupyterhub-fileserver-api:kubernetes
-            bengig/jupyterhub-fileserver-api:${{ env.SHA }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
