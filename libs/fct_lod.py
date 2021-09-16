@@ -207,7 +207,7 @@ class Ls:
                         )
             return d
         else:
-            self.status = "Directory doesn't exist"
+            self.status = "Directory doesn't exist: {0}".format(path)
             self.errcode = 404
             return None
 
