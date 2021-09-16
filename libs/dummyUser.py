@@ -15,7 +15,7 @@ class notoUser:
         :param id: THE id, user identification from IAM
         :param email: 2nd argument for validation?
         """
-        id = id.replace(".", "-5e")
+        id = id.replace(".", "-2e")
         id = id.replace("@", "-40")
         user = {"normalised": id, "uid": id}
         return user
