@@ -26,5 +26,6 @@ repos:
   rev: 1.7.0
   hooks:
     - id: bandit
-      args: ['-s', 'B608', '-x', 'tests/', '-r', 'libs']
+      args: ['-s', 'B608,B605', '-x', 'tests/', '-r', 'libs']
+      # B605: process within a shell
       # B608: possible SQL injection
