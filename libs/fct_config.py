@@ -8,7 +8,7 @@ class ConfigFile:
         self.auth = []
         self.ttl = 30
         self.homeroot = ""
-        sefl.chmod = False
+        self.chmod = False
         config_file_present = False
         try:
             # TODO: path to config file
