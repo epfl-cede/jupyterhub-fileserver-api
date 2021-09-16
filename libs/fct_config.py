@@ -8,6 +8,7 @@ class ConfigFile:
         self.auth = []
         self.ttl = 30
         self.homeroot = ""
+        sefl.chmod = False
         config_file_present = False
         try:
             # TODO: path to config file
@@ -21,7 +22,7 @@ class ConfigFile:
             self.auth = self.configjson["auth"]
             self.ttl = self.configjson["ttl"]
             self.homeroot = self.configjson["root"]
-            self.allget = False  # self.configjson['allget']
+            self.chmod = self.configjson["chmod"]
 
         # Overwrite configuration if environment variables are set
         user = os.getenv("AUTH_USER")

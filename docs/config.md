@@ -15,7 +15,7 @@ overwritten with environment variables.__
           ],
   "ttl": 10,
   "root": "/Users/antoine/Documents/epfl-cede/noto-api/test-data",
-  "allget": true
+  "chmod": false
 }
 ```
 

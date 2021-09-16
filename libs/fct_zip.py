@@ -110,6 +110,7 @@ class UzU:
             root = conf.homeroot
             payload = json.loads(payload)
             self.user = moodle2notouser(payload["user"])
+            self.do_chmod = conf.chmod
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
                 destination = payload["destination"]
@@ -197,10 +198,13 @@ class UzU:
                     except PermissionError:
                         pass
 
-                # os.system(
-                #     f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
-                # )
-                # os.system(f"chmod -R {self.access['chmod']} {self.root}")
+                if self.do_chmod and "KUBERNETES_SERVICE_HOST" not in os.environ:
+                    # chmod only performed if requested in configuration file.
+                    # This chmod is not needed in Kubernetes.
+                    os.system(
+                        f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
+                    )
+                    os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
             log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
             return {"extractpath": self.root.replace(self.basename, "")}
