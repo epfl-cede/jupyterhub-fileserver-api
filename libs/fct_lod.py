@@ -42,7 +42,7 @@ class LoD:
                         d["children"].append(self._path_to_dict(os.path.join(path, x)))
             return d
         else:
-            self.status = "Directory doesn't exist"
+            self.status = "Directory doesn't exist: {0}".format(path)
             self.errcode = 404
             return None
 
@@ -129,7 +129,7 @@ class LoF:
                         )
             return d
         else:
-            self.status = "Directory doesn't exist"
+            self.status = "Directory doesn't exist: {0}".format(path)
             self.errcode = 404
             return None
 
