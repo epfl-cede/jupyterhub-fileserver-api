@@ -2,11 +2,10 @@
 /venv/
 /test-data/
 /config.json
-/__pycache__/
+**/__pycache__/**
 /.example.db
 /.stats.db
 
-libs/__pycache__/
 **/.coverage
 /htmlcov
 
