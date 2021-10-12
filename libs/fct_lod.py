@@ -4,23 +4,24 @@ import time
 from pathlib import Path
 
 from libs.fct_global import moodle2notouser
+from libs.fct_global import DynamicRoot 
 
 
 class LoD:
     def __init__(self, conf, payload, *kwargs):
         try:
-            root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
             user = moodle2notouser(payload["user"])
+
             if user.errcode == 0:
                 userloc = user.getNotoUser()
                 if userloc == "":
-                    # Never return with an empty user path, would allow access to all user directories
                     self.status = "Empty user path rejected"
                     self.errcode = 500
-                    self.root = os.path.join(root, "invalid_path")
+                    self.root = dyn_root.getInvalidPath()
                     return
-                self.root = os.path.join(root, userloc)
+                self.root = dyn_root.getRoot(userloc)['root']
                 self.status = "OK"
                 self.errcode = 0
             else:
@@ -74,7 +75,7 @@ class LoD:
 class LoF:
     def __init__(self, conf, payload, *kwargs):
         try:
-            root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
             user = moodle2notouser(payload["user"])
 
@@ -84,9 +85,9 @@ class LoF:
                     # Never return with an empty user path, would allow access to all user directories
                     self.status = "Empty user path rejected"
                     self.errcode = 500
-                    self.root = os.path.join(root, "invalid_path")
+                    self.root = dyn_root.getInvalidPath()
                     return
-                self.root = os.path.join(root, userloc)
+                self.root = dyn_root.getRoot(userloc)['root']
                 self.path = payload["path"]
                 self.status = "OK"
                 self.errcode = 0
@@ -161,7 +162,7 @@ class LoF:
 class Ls:
     def __init__(self, conf, payload, *kwargs):
         try:
-            root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
             user = moodle2notouser(payload["user"])
 
@@ -171,10 +172,10 @@ class Ls:
                     # Never return with an empty user path, would allow access to all user directories
                     self.status = "Empty user path rejected"
                     self.errcode = 500
-                    self.root = os.path.join(root, "invalid_path")
+                    self.root = dyn_root.getInvalidPath()
                     return
                 path = payload["path"]
-                self.root = os.path.join(root, userloc, path)
+                self.root = os.path.join(dyn_root.getRoot(userloc)['root'], userloc, path)
                 self.status = "OK"
                 self.errcode = 0
             else:
@@ -182,7 +183,7 @@ class Ls:
                 self.errcode = user.errcode
 
         except Exception as e:
-            self.status = "Error with payload: {0}".format(e)
+            self.status = "Error with payload AAA: {0}".format(e)
             self.errcode = 500
 
     def _path_to_dict(self, path):

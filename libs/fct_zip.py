@@ -4,7 +4,7 @@ import os
 import json
 import base64
 
-from libs.fct_global import moodle2notouser, SendLog
+from libs.fct_global import moodle2notouser, SendLog, DynamicRoot
 
 
 class ZipBlob:
@@ -41,16 +41,21 @@ class ZfS:
     """
 
     def __init__(self, conf, payload, *kwargs):
+        sl = SendLog()
+        sl.write(event = 'ZfS', action = 'init', userid = None)
         try:
-            root = conf.homeroot
+            #root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
             self.user = moodle2notouser(payload["user"])
 
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
                 folder = payload["folder"]
-                self.root = os.path.join(root, userloc, folder)
+                #self.root = os.path.join(root, userloc, folder)
+                self.root = os.path.join(dyn_root.getRoot(userloc)['root'], userloc, folder)
                 self.origin = os.path.join(userloc, folder)
+                sl.write(event = 'self.root', action = self.root, userid = None)
                 if not os.path.exists(self.root):
                     self.status = "Error : destination does not exist"
                     self.errcode = 440
@@ -106,14 +111,19 @@ class UzU:
     """
 
     def __init__(self, conf, payload, files):
+        sl = SendLog()
+        sl.write(event = 'Uzu', action = 'init', userid = None)
         try:
-            root = conf.homeroot
+            #root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
             self.user = moodle2notouser(payload["user"])
             self.do_chmod = conf.chmod
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
                 destination = payload["destination"]
+                # Get root variable ready
+                root = dyn_root.getRoot(userloc)['root']
                 if destination == ".":
                     self.status = "Error : destination is not defined"
                     self.errcode = 500
@@ -122,6 +132,7 @@ class UzU:
                     self.errcode = 440
                 else:
                     self.blob = files["file"]  # payload['blob']
+                    #userroot = os.path.join(root, userloc)
                     userroot = os.path.join(root, userloc)
                     self.access = {
                         "chmod": oct(os.stat(userroot).st_mode)[-3:],

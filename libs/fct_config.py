@@ -22,6 +22,7 @@ class ConfigFile:
             self.auth = self.configjson["auth"]
             self.ttl = self.configjson["ttl"]
             self.homeroot = self.configjson["root"]
+            self.dynamic_root = self.configjson["dynamic_root"]
             self.chmod = self.configjson["chmod"]
 
         # Overwrite configuration if environment variables are set

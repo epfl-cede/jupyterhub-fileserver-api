@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import hmac
+import os
 
 try:
     from notouser import notoUser
@@ -15,6 +16,35 @@ except ImportError:
     customLogger = False
 import logging
 
+try:
+    from notouser import notoDiskInfo
+    dynamic_root_available = True
+except ImportError:
+    dynamic_root_available = False
+
+class DynamicRoot:
+    """
+    This class is used to manage dynamic root on the file server
+    The notoDiskInfo class is used to get information on the user's home location - IF available.
+    If the notoDiskInfo class is not available, the default "root" configuration item is used
+    """
+
+    def __init__(self, conf):
+        if dynamic_root_available and conf.dynamic_root:
+            self.ndi = notoDiskInfo()
+        else:
+            self.ndi = None
+            self.root = conf.homeroot
+
+    def getRoot(self, username):
+        if self.ndi is not None:
+           return self.ndi.get_root(username)
+        else:
+            exists = os.path.isdir( os.path.join(self.root, username) )
+            return { 'exists': exists, 'root': self.root }
+
+    def getInvalidPath(self):
+        return os.path.join(os.sep, "invalid_path")
 
 class CalcHmac:
     """
