@@ -21,7 +21,7 @@ class LoD:
                     self.errcode = 500
                     self.root = dyn_root.getInvalidPath()
                     return
-                self.root = dyn_root.getRoot(userloc)["root"]
+                self.root = os.path.join(dyn_root.getRoot(userloc)["root"], userloc)
                 self.status = "OK"
                 self.errcode = 0
             else:
@@ -87,7 +87,7 @@ class LoF:
                     self.errcode = 500
                     self.root = dyn_root.getInvalidPath()
                     return
-                self.root = dyn_root.getRoot(userloc)["root"]
+                self.root = os.path.join(dyn_root.getRoot(userloc)["root"], userloc)
                 self.path = payload["path"]
                 self.status = "OK"
                 self.errcode = 0
