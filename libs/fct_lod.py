@@ -4,7 +4,7 @@ import time
 from pathlib import Path
 
 from libs.fct_global import moodle2notouser
-from libs.fct_global import DynamicRoot 
+from libs.fct_global import DynamicRoot
 
 
 class LoD:
@@ -21,7 +21,7 @@ class LoD:
                     self.errcode = 500
                     self.root = dyn_root.getInvalidPath()
                     return
-                self.root = dyn_root.getRoot(userloc)['root']
+                self.root = dyn_root.getRoot(userloc)["root"]
                 self.status = "OK"
                 self.errcode = 0
             else:
@@ -87,7 +87,7 @@ class LoF:
                     self.errcode = 500
                     self.root = dyn_root.getInvalidPath()
                     return
-                self.root = dyn_root.getRoot(userloc)['root']
+                self.root = dyn_root.getRoot(userloc)["root"]
                 self.path = payload["path"]
                 self.status = "OK"
                 self.errcode = 0
@@ -175,7 +175,9 @@ class Ls:
                     self.root = dyn_root.getInvalidPath()
                     return
                 path = payload["path"]
-                self.root = os.path.join(dyn_root.getRoot(userloc)['root'], userloc, path)
+                self.root = os.path.join(
+                    dyn_root.getRoot(userloc)["root"], userloc, path
+                )
                 self.status = "OK"
                 self.errcode = 0
             else:
