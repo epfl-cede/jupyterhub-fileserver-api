@@ -1,0 +1,4 @@
+coverage
+decorator
+pytest
+pytest-cov

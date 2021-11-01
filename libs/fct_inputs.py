@@ -1,9 +1,8 @@
 import time
-
 from libs.fct_global import CalcMd5, CalcHmac
 
 
-class ValidateInput():
+class ValidateInput:
     def __init__(self, request, auth, ttl):
         self.request = request
         self.auth = auth
@@ -16,14 +15,19 @@ class ValidateInput():
         self.valid = False
         if self._validate_request():
             try:
-                user = self.request['user']
-                timestamp = int(self.request['timestamp'])
+                user = self.request["user"]
+                timestamp = int(self.request["timestamp"])
                 if self.auth.CheckUser(user):  # check that user exist
-                    if time.time() - timestamp <= self.ttl:  # check that timing is in the ttl range
+                    # check that timing is in the ttl range
+                    if time.time() - timestamp <= self.ttl:
                         md5 = CalcMd5(request=self.request)
-                        if self.request['md5_payload'] == md5.md5_payload():  # check that payload has correct md5
-                            hmac = CalcHmac(request=self.request, key=self.auth.UserKey(user))
-                            if self.request['key'] == hmac.getHmac():  # check key encryption
+                        # check that payload has correct md5 (over payload) and hmac (includes secret)
+                        if self.request["md5_payload"] == md5.md5_payload():
+                            hmac = CalcHmac(
+                                request=self.request, key=self.auth.UserKey(user)
+                            )
+                            # check key encryption
+                            if self.request["key"] == hmac.getHmac():
                                 self.status = "OK"
                                 self.errcode = 0
                                 return True
@@ -36,24 +40,28 @@ class ValidateInput():
                             self.errcode = 103
                             return False
                     else:
-                        self.status = "Error : checking timestamp increase ttl if persist"
+                        self.status = (
+                            "Error : checking timestamp increase ttl if persist"
+                        )
                         self.errcode = 102
                         return False
                 else:
-                    self.status = "Error : user is unknown"
-                    self.errcode = 101
+                    self.status = "Error : authentication failed"
+                    self.errcode = 401
                     return False
-            except:
-                self.status = "Error : treating the request"
+            except Exception as e:  # pragma: no cover
+                self.status = "Error : treating the request: {}".format(e)
                 self.errcode = -1
                 return False
         else:
-            self.status = "Error : the request is not formatted correctly : " + self.status
+            self.status = (
+                "Error : the request is not formatted correctly : " + self.status
+            )
             self.errcode = 100
             return False
 
     def _validate_request(self):
-        keys = ['user', 'timestamp', 'payload', 'md5_payload', 'key']
+        keys = ["user", "timestamp", "payload", "md5_payload", "key"]
 
         for key in keys:
             if key not in self.request:
@@ -69,8 +77,5 @@ class ValidateInput():
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status

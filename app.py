@@ -12,11 +12,13 @@ from libs.fct_auth import Auth
 from libs.fct_config import ConfigFile
 from libs.flask_stats.flask_stats import Stats
 
-log = reusables.get_logger('main', level=logging.DEBUG)
+# Changed from get_logger, deprecation warning
+log = reusables.setup_logger("main", level=logging.DEBUG)
 
 debug = True
 
 conf = ConfigFile("config.json")
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -35,7 +37,9 @@ class callfct(Resource):
             if debug:
                 log.debug("request is valid")
 
-                Ccommand = fct(conf, request.args['payload'],request.files)  # changed for each commands
+                Ccommand = fct(
+                    conf, request.args["payload"], request.files
+                )  # changed for each commands
 
                 if Ccommand.isok():
                     payload = Ccommand.GetPayload()
@@ -50,7 +54,10 @@ class callfct(Resource):
                     return output.generate()
                 else:
                     if debug:
-                        log.debug("error with payload ")
+                        log.debug(
+                            "error with payload in callfct: {0}".format(Ccommand.status)
+                        )
+                        log.debug("Payload: {0}".format(payload))
                     output.SetStatus(Ccommand.GetStatus())
                     return output.generate()
 
@@ -63,43 +70,48 @@ class callfct(Resource):
 
 # api.add_resource(Root, '/')
 
-@app.route('/')
+
+@app.route("/")
 def hello():
     output = Output()
-    output.SetStatus(status={
-        'code': 0,
-        'status': "OK"
-    })
+    output.SetStatus(status={"code": 0, "status": "OK"})
     return output.generate()
 
 
-@app.route('/ls', methods=['GET'])
+@app.route("/healthz")
+def healthz():
+    return "OK"
+
+
+@app.route("/ls", methods=["GET"])
 def get_ls():
     cfct = callfct()
     return cfct.run(Ls, request)
 
-@app.route('/lof', methods=['GET'])
+
+@app.route("/lof", methods=["GET"])
 def get_lof():
     cfct = callfct()
     return cfct.run(LoF, request)
 
-@app.route('/lod', methods=['GET'])
+
+@app.route("/lod", methods=["GET"])
 def get_lod():
     cfct = callfct()
     return cfct.run(LoD, request)
 
 
-@app.route('/zfs', methods=['GET'])
+@app.route("/zfs", methods=["GET"])
 def get_zfs():
     cfct = callfct()
     return cfct.run(ZfS, request)
 
 
-@app.route('/uzu', methods=['POST'])
+@app.route("/uzu", methods=["POST"])
 def post_uzu():
     cfct = callfct()
     return cfct.run(UzU, request)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":  # pragma: nocover
     app.run()

@@ -1,4 +1,5 @@
-__Configuration is done in ```config.json``` file__
+__Configuration is done in ```config.json``` file, and may be
+overwritten with environment variables.__
 
 # ```config.json``` file
 ## Example of ```config.json```
@@ -14,20 +15,24 @@ __Configuration is done in ```config.json``` file__
           ],
   "ttl": 10,
   "root": "/Users/antoine/Documents/epfl-cede/noto-api/test-data",
-  "allget": true
+  "chmod": false
 }
 ```
 
-## auth 
+## auth
 Table of user and key for accessing API
 
 ## ttl
-TimeToLive : time validity of the request (in seconds) 
+TimeToLive : time validity of the request (in seconds)
+
+Env variable: `TTL`
 
 ## root
-Path to the root of user directories
+Path to the root of user directories.
+
+Env variable: `HOMEROOT`
 
 
-# Changing the production port 
+# Changing the production port
 
 Edit ```systemd/notoapi.service``` and change the port in the ```gunicorn``` command.

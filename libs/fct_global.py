@@ -1,10 +1,52 @@
 import base64
-import hashlib, hmac
+import hashlib
+import hmac
+import os
 
-import json
-from notouser import notoUser
-from cedelogger import cedeLogger
+try:
+    from notouser import notoUser
+except ImportError:
+    from libs.dummyUser import notoUser
+
+try:
+    from cedelogger import cedeLogger
+
+    customLogger = True  # pragma: no cover
+except ImportError:
+    customLogger = False
 import logging
+
+try:
+    from notouser import notoDiskInfo
+
+    dynamic_root_available = True
+except ImportError:
+    dynamic_root_available = False
+
+
+class DynamicRoot:
+    """
+    This class is used to manage dynamic root on the file server
+    The notoDiskInfo class is used to get information on the user's home location - IF available.
+    If the notoDiskInfo class is not available, the default "root" configuration item is used
+    """
+
+    def __init__(self, conf):
+        if dynamic_root_available and conf.dynamic_root:
+            self.ndi = notoDiskInfo()
+        else:
+            self.ndi = None
+            self.root = conf.homeroot
+
+    def getRoot(self, username):
+        if self.ndi is not None:
+            return self.ndi.get_root(username)
+        else:
+            exists = os.path.isdir(os.path.join(self.root, username))
+            return {"exists": exists, "root": self.root}
+
+    def getInvalidPath(self):
+        return os.path.join(os.sep, "invalid_path")
 
 
 class CalcHmac:
@@ -19,11 +61,13 @@ class CalcHmac:
         :param key: secret key for this user
         """
 
-        self.payload = request['payload']
-        self.user = request['user']
+        self.payload = request["payload"]
+        self.user = request["user"]
         self.key = key
-        self.timestamp = request['timestamp']
-        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest()).decode('utf-8')
+        self.timestamp = request["timestamp"]
+        self.md5_payload = base64.b64encode(
+            hashlib.md5(self.payload.encode("utf-8")).digest()  # nosec
+        ).decode("utf-8")
         self.hmac = None
 
     def getHmac(self):
@@ -34,9 +78,14 @@ class CalcHmac:
 
         string = self.user + self.timestamp + self.md5_payload
         self.hmac = base64.b64encode(
-            hmac.new(self.key.encode('utf-8'), string.encode('utf-8'), digestmod=hashlib.sha256).digest())
+            hmac.new(
+                self.key.encode("utf-8"),
+                string.encode("utf-8"),
+                digestmod=hashlib.sha256,
+            ).digest()
+        )
 
-        return self.hmac.decode('utf-8')
+        return self.hmac.decode("utf-8")
 
 
 class CalcMd5:
@@ -50,16 +99,18 @@ class CalcMd5:
         :param request: dict with request arguments
         :param key: secret key for this user
         """
-
-        self.payload = request['payload']
+        self.md5 = ""
+        self.payload = request["payload"]
 
     def md5_payload(self):
         """
         Calculate the md5 of the payload
         :return: base64 md5(payload)
         """
-        self.md5_payload = base64.b64encode(hashlib.md5(self.payload.encode('utf-8')).digest())
-        return self.md5_payload.decode('utf-8')
+        self.md5 = base64.b64encode(
+            hashlib.md5(self.payload.encode("utf-8")).digest()  # nosec
+        )
+        return self.md5.decode("utf-8")
 
 
 class moodle2notouser:
@@ -69,36 +120,42 @@ class moodle2notouser:
 
     def __init__(self, userpayload):
         try:
-            self.id = userpayload['id']
-            self.email = userpayload['primary_email']
-            self.auth_meth = userpayload['auth_method']
-        except:
-            self.status = "Error with user payload"
+            self.id = userpayload["id"]
+            self.email = userpayload["primary_email"]
+            self.auth_meth = userpayload["auth_method"]
+        except Exception as e:
+            self.status = "Error with user payload: {0}".format(e)
             self.errcode = 510
         n = notoUser()
         try:
             self.NotoUser = n.userFromAPI(self.id, self.email)
-            print("USER" , self.NotoUser)
             self.status = "OK"
             self.errcode = 0
-        except:
-            self.status = "Error with notoUser"
+        except Exception as e:
+            self.status = "Error with notoUser: {0}".format(e)
             self.errcode = 515
 
     def getNotoUser(self):
-        return self.NotoUser['normalised']
+        return self.NotoUser["normalised"]
 
     def getNotoUserid(self):
-        return self.NotoUser['uid']
+        return self.NotoUser["uid"]
 
 
 class SendLog:
     """
-    This class is used to send log to noto syslog
+    This class is used to send log to noto syslog if available
     """
 
     def __init__(self):
-        self.logger = cedeLogger(tag='fsapi')
+        if customLogger:
+            self.logger = cedeLogger(tag="fsapi")  # pragma: no cover
+        # else:
+        #     self.logger = logging.getLogger()
 
     def write(self, event, action, userid):
-        self.logger.log({'event': event, 'action': action, 'uid': userid}, level=logging.CRITICAL)
+        if customLogger:
+            self.logger.log(
+                {"event": event, "action": action, "uid": userid},
+                level=logging.CRITICAL,
+            )  # pragma: no cover

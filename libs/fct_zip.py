@@ -2,10 +2,9 @@ from io import BytesIO
 import zipfile
 import os
 import json
-from werkzeug.utils import secure_filename
 import base64
 
-from libs.fct_global import moodle2notouser, SendLog
+from libs.fct_global import moodle2notouser, SendLog, DynamicRoot
 
 
 class ZipBlob:
@@ -20,18 +19,18 @@ class ZipBlob:
         :return: base 64 blob of zip
         """
         memory_file = BytesIO()
-        with zipfile.ZipFile(memory_file, 'w', zipfile.ZIP_DEFLATED) as zipf:
+        with zipfile.ZipFile(memory_file, "w", zipfile.ZIP_DEFLATED) as zipf:
             for root, dirs, files in os.walk(path):
                 for file in files:
                     filepath = os.path.join(root, file)
-                    archivepath = filepath.replace(path, '')
+                    archivepath = filepath.replace(path, "")
                     zipf.write(filepath, archivepath)
         memory_file.seek(0)
         return base64.b64encode(memory_file.read()).decode("utf-8")
 
     def PutZip(self, blob, path):
         memory_file = BytesIO(blob.read())  # BytesIO(base64.b64decode(blob))
-        with zipfile.ZipFile(memory_file, 'r') as zipf:
+        with zipfile.ZipFile(memory_file, "r") as zipf:
             os.chdir(path)
             zipf.extractall()
 
@@ -42,16 +41,23 @@ class ZfS:
     """
 
     def __init__(self, conf, payload, *kwargs):
+        sl = SendLog()
+        sl.write(event="ZfS", action="init", userid=None)
         try:
-            root = conf.homeroot
+            # root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
-            self.user = moodle2notouser(payload['user'])
+            self.user = moodle2notouser(payload["user"])
 
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
-                folder = payload['folder']
-                self.root = os.path.join(root, userloc, folder)
+                folder = payload["folder"]
+                # self.root = os.path.join(root, userloc, folder)
+                self.root = os.path.join(
+                    dyn_root.getRoot(userloc)["root"], userloc, folder
+                )
                 self.origin = os.path.join(userloc, folder)
+                sl.write(event="self.root", action=self.root, userid=None)
                 if not os.path.exists(self.root):
                     self.status = "Error : destination does not exist"
                     self.errcode = 440
@@ -62,8 +68,8 @@ class ZfS:
                 self.status = self.user.status
                 self.errcode = self.user.errcode
 
-        except:
-            self.status = "Error with payload"
+        except Exception as e:
+            self.status = "Error with payload: {0}".format(e)
             self.errcode = 500
 
     def _getZfS(self):
@@ -74,9 +80,14 @@ class ZfS:
             zip = ZipBlob()
             blob = zip.GetZip(self.root)
             log.write("Zfs SUCCESS", "from : " + self.root, self.user.getNotoUserid())
-            return {'origin': self.origin, 'blob': blob, "method": "base64", "mime": "application/zip"}
-        except:
-            self.status = "Error : zip is not working in this directory"
+            return {
+                "origin": self.origin,
+                "blob": blob,
+                "method": "base64",
+                "mime": "application/zip",
+            }
+        except Exception as e:
+            self.status = "Error: zip is not working in this directory: {0}".format(e)
             self.errcode = -1
             log.write("Zfs FAILED", "from : " + self.root, self.user.getNotoUserid())
             return []
@@ -92,10 +103,7 @@ class ZfS:
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status
 
 
@@ -105,13 +113,19 @@ class UzU:
     """
 
     def __init__(self, conf, payload, files):
+        sl = SendLog()
+        sl.write(event="Uzu", action="init", userid=None)
         try:
-            root = conf.homeroot
+            # root = conf.homeroot
+            dyn_root = DynamicRoot(conf)
             payload = json.loads(payload)
-            self.user = moodle2notouser(payload['user'])
+            self.user = moodle2notouser(payload["user"])
+            self.do_chmod = conf.chmod
             if self.user.errcode == 0:
                 userloc = self.user.getNotoUser()
-                destination = payload['destination']
+                destination = payload["destination"]
+                # Get root variable ready
+                root = dyn_root.getRoot(userloc)["root"]
                 if destination == ".":
                     self.status = "Error : destination is not defined"
                     self.errcode = 500
@@ -119,10 +133,14 @@ class UzU:
                     self.status = "Error : destination does not exist"
                     self.errcode = 440
                 else:
-                    self.blob = files['file']  # payload['blob']
+                    self.blob = files["file"]  # payload['blob']
+                    # userroot = os.path.join(root, userloc)
                     userroot = os.path.join(root, userloc)
-                    self.access = {'chmod': oct(os.stat(userroot).st_mode)[-3:], 'uid': os.stat(userroot).st_uid,
-                                   'gid': os.stat(userroot).st_gid}
+                    self.access = {
+                        "chmod": oct(os.stat(userroot).st_mode)[-3:],
+                        "uid": os.stat(userroot).st_uid,
+                        "gid": os.stat(userroot).st_gid,
+                    }
                     self.root = os.path.join(userroot, destination)
                     self.basename = os.path.join(root)
 
@@ -133,8 +151,8 @@ class UzU:
                 self.status = self.user.status
                 self.errcode = self.user.errcode
 
-        except:
-            self.status = "Error with payload"
+        except Exception as e:
+            self.status = "Error with payload: {0}".format(e)
             self.errcode = 500
 
     def _checkdest(self):
@@ -154,23 +172,58 @@ class UzU:
 
     def _postUzU(self):
         log = SendLog()
-        try:
-            if self._checkdest():
-                self.status = "OK"
-                self.errcode = 0
-                zip = ZipBlob()
-                zip.PutZip(self.blob, self.root)
-                # apply file permission
-                os.system(f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'")
-                #os.system(f"chmod -R {self.access['chmod']} {self.root}")
+        if self._checkdest():
+            self.status = "OK"
+            self.errcode = 0
+            zip = ZipBlob()
 
-                log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
-            return {'extractpath': self.root.replace(self.basename, '')}
-        except:
-            self.status = "Error : zip extract not working in this directory"
-            self.errcode = -1
-            log.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
-            return []
+            try:
+                zip.PutZip(self.blob, self.root)
+            except Exception as e:
+                if len(self.blob) == 0:
+                    self.status = "Error: zip blob size is 0"
+                else:
+                    self.status = (
+                        "Error: zip extract not working in this directory: {0}".format(
+                            e
+                        )
+                    )
+                self.errcode = -1
+                log.write(
+                    "Uzu FAILED", "from : " + self.root, self.user.getNotoUserid()
+                )
+                return []
+
+            # apply file permission; skip on Windows
+            if os.name != "nt":
+                # safer to not use shell call
+                for root, dirs, files in os.walk(self.root):
+                    # Fails in Kubernetes, we're not root; there we have set uid/gid
+                    # to the same values as used in  Jupyter notebook containers.
+                    # TODO: do we need a configuration to trigger?
+                    try:
+                        for loc in files:
+                            os.chown(
+                                os.path.join(root, loc),
+                                self.access["uid"],
+                                self.access["gid"],
+                            )
+                    except PermissionError:
+                        pass
+
+                if self.do_chmod and "KUBERNETES_SERVICE_HOST" not in os.environ:
+                    # chmod only performed if requested in configuration file.
+                    # This chmod is not needed in Kubernetes.
+                    os.system(
+                        f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
+                    )
+                    os.system(f"chmod -R {self.access['chmod']} {self.root}")
+
+            log.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
+            return {"extractpath": self.root.replace(self.basename, "")}
+
+        log.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
+        return []
 
     def GetPayload(self):
         return self._postUzU()
@@ -183,8 +236,5 @@ class UzU:
             return False
 
     def GetStatus(self):
-        status = {
-            'code': self.errcode,
-            'status': self.status
-        }
+        status = {"code": self.errcode, "status": self.status}
         return status

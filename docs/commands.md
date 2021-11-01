@@ -9,11 +9,11 @@ Every input should have those parameters :
 ## user
 Type : json table
 Fields :
-- id (string) : moodle user id 
+- id (string) : moodle user id
 - primary_email (string) : Email of moodle user
 - auth_method (string) : authentication method from moodle
 
-### Test user 
+### Test user
 In order to try the API an users tests can be used:
  ``` user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"} ```
  ``` user: {id:'test2', primary_email:'test2@epfl.ch',auth_method:"test"} ```
@@ -21,7 +21,7 @@ In order to try the API an users tests can be used:
 
 **Be careful the ```test```  auth_method is reserved and only those login will work**
 
-### Example 
+### Example
 ```
 user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"noto"}
 ```
@@ -30,7 +30,7 @@ user: {id:'253705', primary_email:'pierre-olivier.valles@epfl.ch',auth_method:"n
 Type : int
 The epoch time of the request
 
-## payload 
+## payload
 Type : string / json
 Could be empty '{}' or extra command depending of the endpoint
 
@@ -46,18 +46,18 @@ Note : key is shared between the api and the user and it is not send
 
 # General output
 
-The output is a JSON string with 
+The output is a JSON string with
 - md5_payload(base64)
 - payload
 - return
     - code
     - status
-    
+
 ## md5_payload
 Type : string
 The md5 (base64) of the payload
 
-## payload 
+## payload
 Type : string / json
 Could be empty '{}' or output of the command depending of the endpoint
 
@@ -70,10 +70,10 @@ If different than 0 the request has an error
 
 ### Status
 Type : String
-If Code = 0 then Status is "OK" 
+If Code = 0 then Status is "OK"
 Otherwise the status give an explanation about the error
 
-## Example 
+## Example
 ```
 {
     "md5_payload": "mZFLkyvTelC5g8XnyQrpOw==",
@@ -89,7 +89,7 @@ Otherwise the status give an explanation about the error
 
 ## __/ls__ : List the contents of a path for a given user
 Method : GET
-Description : This command list the directories and file for a given path inside an user folder. 
+Description : This command list the directories and file for a given path inside an user folder.
 The desired user and path is given in the command payload
 
 Input :
@@ -99,9 +99,9 @@ Input :
 Output : A table of :
 - name (string) : name of the object
 - type (string) : "directory" or "file"
-- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
+- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only)
 ### Example :
-- Input : 
+- Input :
 ```
 { user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"}, path:"truc/test0"}
 ```
@@ -130,13 +130,13 @@ Input :
 Output : A table of :
 - name (string) : name of the object
 - type (string) : "directory" or "file"
-- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only) 
-- children (json table)  (for directory only) : contents inside this folder 
+- last-modification (formated string ```%Y-%m-%d %H:%M:%S```) : last modification (for file only)
+- children (json table)  (for directory only) : contents inside this folder
 
 Note : In case the last-modification cannot be determined the value "unknown" is returned
 
 ### Example :
-- Input : 
+- Input :
 ```
 { user: {id:'test2', primary_email:'test2@epfl.ch',auth_method:"test"}, path:"./"}
 ```
@@ -159,14 +159,14 @@ Method : GET
 Description : This command list the directories inside an user folder. The desired user is given in the command payload
 Input :
 - user (string)
- 
+
 Output : A table of :
 - name (string) : directory name
 - type (string) : "directory"
-- children (json table) : contains the other directories inside this folder 
+- children (json table) : contains the other directories inside this folder
 
 ### Example :
-- Input : 
+- Input :
 ```
 { user: {id:'test', primary_email:'test@epfl.ch',auth_method:"test"} ,path:"./"} }
 ```
@@ -175,7 +175,7 @@ Output : A table of :
 ```
 {
     "md5_payload": "...",
-    "payload": "{\"name\": \"antoine\", \"type\": \"directory\", 
+    "payload": "{\"name\": \"antoine\", \"type\": \"directory\",
 \"children\": [{\"name\": \"essai\", \"type\": \"directory\", \"children\": []}, {\"name\": \"important\", \"type\": \"directory\", \"children\": [{\"name\": \"bidule\", \"type\": \"directory\", \"children\": []}]}, {\"name\": \"truc\", \"type\": \"directory\", \"children\": [{\"name\": \"test0\", \"type\": \"directory\", \"children\": [{\"name\": \"test0.1\", \"type\": \"directory\", \"children\": []}]}]}]}",
     "return": {
         "code": 0,
@@ -190,7 +190,7 @@ Method : GET
 
 Description : This command return a zip (blob) from a given directory
 
-Input : 
+Input :
 - user (string)
 - folder (string) : the path of the folder where the zip will be started
 
@@ -262,7 +262,7 @@ Note: This is accessible without keys
 
 ### Example
 
-- Input : 
+- Input :
  _None_
 
 - Output :`
@@ -308,4 +308,3 @@ Note: This is accessible without keys
     ]
 }
 ```
-

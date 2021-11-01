@@ -1,0 +1,31 @@
+---
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.4.0
+  hooks:
+    - id: check-yaml
+      args: ['--allow-multiple-documents']
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: mixed-line-ending
+      args: ['--fix=lf']
+    - id: requirements-txt-fixer
+
+- repo: https://gitlab.com/pycqa/flake8
+  rev: 3.9.2
+  hooks:
+    - id: flake8
+      args: ['--ignore=W503,E501,E402', '--exclude=systemd/*', 'libs']
+
+- repo: https://github.com/psf/black
+  rev: 21.5b1
+  hooks:
+    - id: black
+
+- repo: https://github.com/PyCQA/bandit
+  rev: 1.7.0
+  hooks:
+    - id: bandit
+      args: ['-s', 'B608,B605', '-x', 'tests/', '-r', 'libs']
+      # B605: process within a shell
+      # B608: possible SQL injection

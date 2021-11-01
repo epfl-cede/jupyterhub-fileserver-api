@@ -1,0 +1,13 @@
+{
+  "auth":
+          [
+            {
+              "user": "user-id",
+              "key": "key-id"
+            }
+          ],
+  "ttl": 10,
+  "root": "/path/to/homes",
+  "dynamic_root": false,
+  "chmod": false
+}
