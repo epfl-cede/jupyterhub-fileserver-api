@@ -208,6 +208,10 @@ class Ls:
                                 ),
                             }
                         )
+            # Sort by name
+            d = sorted(d, key=lambda x: x['name'])
+            # Sort by type
+            d = sorted(d, key=lambda x: x['type'])
             return d
         else:
             self.status = "Directory doesn't exist: {0}".format(path)
