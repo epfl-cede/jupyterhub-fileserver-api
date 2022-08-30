@@ -1,0 +1,7 @@
+---
+# This is the base kustomization. It collects the deployment and
+# the service object. The deployment can be considered a template
+# for further kustomization for a given JupyterHub instance.
+resources:
+  - deployment.yml
+  - service.yml

@@ -1,0 +1,40 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle-api
+  labels:
+    app: moodle-api
+spec:
+  selector:
+    matchLabels:
+      app: moodle-api
+  template:
+    metadata:
+      labels:
+        app: moodle-api
+    spec:
+      containers:
+        - name: moodle-api
+          # Overwrite image tag for production later in detail kustomization!
+          image: bengig/jupyterhub-fileserver-api:latest
+          resources:
+            limits:
+              cpu: "200m"
+            requests:
+              cpu: "100m"
+          ports:
+            - containerPort: 8080
+              name: http
+              protocol: TCP
+          volumeMounts:
+            # Mount the global user share so that we can access all user directories
+            # Must be the same as the HOMEROOT variable for the API server
+            - name: jhub-root
+              mountPath: /mnt
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10

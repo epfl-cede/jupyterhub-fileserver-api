@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: moodle-api
+  annotations:
+    # use the shared ingress-nginx
+    kubernetes.io/ingress.class: "nginx"
+    # manage certificates from LetsEncrypt
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    # Raise the limit for up- and downloads
+    nginx.ingress.kubernetes.io/proxy-body-size: 16m
+    # create (and delete) aliases in our DNS
+    alias-managed: "true"
+spec:
+  rules:
+  - host: jhub-let-02-11111-api.let.ethz.ch
+    http:
+      paths:
+        - backend:
+            service:
+              name: moodle-api
+              port:
+                number: 80
+          path: /
+          pathType: Prefix
+
+  tls:
+    - hosts:
+        - jhub-let-02-11111-api.let.ethz.ch
+      secretName: auto-cert

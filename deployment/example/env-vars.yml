@@ -1,0 +1,19 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle-api
+spec:
+  template:
+    spec:
+      containers:
+        - name: moodle-api
+          env:
+            - name: TTL
+              value: "10"
+            - name: HOMEROOT
+              value: /mnt
+            - name: AUTH_USER
+              value: abcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefghabcdefgh
+            - name: AUTH_KEY
+              value: 0123456701234567012345670123456701234567012345670123456701234567

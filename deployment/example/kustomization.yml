@@ -1,0 +1,19 @@
+---
+# We use separate namespaces for every Moodle course. The suffix (11111)
+# corresponds to the Moodle ID of the associated course.
+namespace: jhub-let-02-11111
+
+# Pin the image tag to a stable version
+images:
+  - name: bengig/jupyterhub-fileserver-api
+    newTag: 1.1.1
+
+# Use the base. Your local path may vary. And add an ingress specific to this instance.
+resources:
+  - ../../../k8s-jupyter-base-master/moodle-api
+  - ingress.yml
+
+# Customizations: apply variables, and add the reference to the PV to the deployment
+patchesStrategicMerge:
+  - env-vars.yml
+  - volume.yml

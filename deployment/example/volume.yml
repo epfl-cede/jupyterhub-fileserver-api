@@ -1,0 +1,15 @@
+---
+# This patch adds a reference to a PVC to the API deployment, which gives access to the
+# top level directory containing all JupyterHub user directories.
+# The PVC is defined in the JupyterHub deployment, not here in the API deployment.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moodle-api
+spec:
+  template:
+    spec:
+      volumes:
+        - name: jhub-root
+          persistentVolumeClaim:
+            claimName: jhub-let-02-11111-claim
