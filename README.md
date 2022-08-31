@@ -42,8 +42,17 @@ The other options are not applicable in Kubernetes and available in the configur
 ### On a File Server
 Installation instructions and some low level documentation can be found in the [docs folder](docs).
 
+The current implementation uses a library _notouser_ specific to the environment at EPFL. It provides
+access to the IAM and has to be replaced by a library designed to work with your own IAM. See the class
+_moodle2notouser_ in _fct_global.py_ for the interface required.
+
 ### Kubernetes
 The directory `deployment` contains an [example for a deployment](deployment/README.md) in Kubernetes.
 It makes use of the highly versatile `kustomize` tool included in `kubectl`. The `base`directory may be
 used by multiple installations and is referenced by the detailed
 configuration in the `example` directory. Don't copy the example as is, but adopt it to your environment.
+
+There is an [Ansible collection](https://gitlab.ethz.ch/k8s-let/ansible/jupyter_hub) containing a role
+which creates all files necessary to deploy JupyterHubs and API servers. JupyterHub instance definitions
+provided as a YAML list are used to configure deployment and removal scripts,
+values files for Helm, PVC definition and API deployments.

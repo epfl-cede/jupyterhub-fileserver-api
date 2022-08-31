@@ -10,7 +10,7 @@ images:
 
 # Use the base. Your local path may vary. And add an ingress specific to this instance.
 resources:
-  - ../../../k8s-jupyter-base-master/moodle-api
+  - ../example/moodle-api
   - ingress.yml
 
 # Customizations: apply variables, and add the reference to the PV to the deployment
