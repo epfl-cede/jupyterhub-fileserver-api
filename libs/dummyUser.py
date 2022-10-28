@@ -18,5 +18,5 @@ class notoUser:
         email = email.replace(".", "-2e")
         email = email.replace("_", "-5f")
         email = email.replace("@", "-40")
-        user = {"normalised": email, "uemail": email}
+        user = {"normalised": email, "uid": email}
         return user

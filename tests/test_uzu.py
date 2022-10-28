@@ -1,5 +1,5 @@
 import os
-from tests.conftest import auth
+from tests.conftest import auth, user_dir
 import urllib.parse
 import json
 from tests.lib import request_items, calc_md5
@@ -22,7 +22,7 @@ def test_uzu(client):
     data = json.loads(rv.data)
     md5_response = data["md5_payload"]
     md5_payload = calc_md5(data)
-    file_list = os.listdir(os.path.join(os.getenv("HOMEROOT"), "test2", "zipdir"))
+    file_list = os.listdir(os.path.join(os.getenv("HOMEROOT"), user_dir, "zipdir"))
 
     # Test return code
     assert data["return"]["code"] == 0
