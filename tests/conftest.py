@@ -6,7 +6,8 @@ import shutil
 
 auth = {"user": "00000000", "key": "11111111"}
 
-user_string = '{"id":"test2","primary_email":"test2@epfl.ch","auth_method":"test"}'
+user_id = "test2@epfl.ch"
+user_string = '{"id":' + user_id + ',"primary_email":' + user_id + ',"auth_method":"test"}'
 
 
 # Test setup
@@ -17,7 +18,7 @@ def client():
     """
     app.testing = True
     home = os.getenv("HOMEROOT")
-    path = os.path.join(home, "test2")
+    path = os.path.join(home, user_id)
     if not os.path.exists(path):
         os.mkdir(path)
         f = open(os.path.join(path, "aaa.txt"), "w")
