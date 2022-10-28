@@ -12,11 +12,11 @@ class notoUser:
 
     def userFromAPI(self, id, email):
         """
-        :param id: THE id, user identification from IAM
-        :param email: 2nd argument for validation?
+        :param id: User identification from IAM, user@ethz.ch. Empty for external users
+        :param email: full mail address, i.e. hans.muster@org.ethz.ch, or hmuster@ethz.ch for students
         """
-        id = id.replace(".", "-2e")
-        id = id.replace("_", "-5f")
-        id = id.replace("@", "-40")
-        user = {"normalised": id, "uid": id}
+        email = email.replace(".", "-2e")
+        email = email.replace("_", "-5f")
+        email = email.replace("@", "-40")
+        user = {"normalised": email, "uemail": email}
         return user
