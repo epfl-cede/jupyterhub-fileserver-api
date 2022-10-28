@@ -7,7 +7,9 @@ import shutil
 auth = {"user": "00000000", "key": "11111111"}
 
 user_id = "test2@epfl.ch"
-user_string = '{"id":' + user_id + ',"primary_email":' + user_id + ',"auth_method":"test"}'
+user_string = (
+    '{"id":' + user_id + ',"primary_email":' + user_id + ',"auth_method":"test"}'
+)
 
 
 # Test setup
