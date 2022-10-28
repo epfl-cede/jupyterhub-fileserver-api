@@ -7,7 +7,7 @@ name: latest
 on:
   push:
     branches:
-      - kubernetes
+      - "*""
     tags:
       - "*"
 
