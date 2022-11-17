@@ -1,7 +1,7 @@
 ---
 repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v3.4.0
+  rev: v4.3.0
   hooks:
     - id: check-yaml
       args: ['--allow-multiple-documents']
@@ -18,12 +18,12 @@ repos:
       args: ['--ignore=W503,E501,E402', '--exclude=systemd/*', 'libs']
 
 - repo: https://github.com/psf/black
-  rev: 21.5b1
+  rev: 22.10.0
   hooks:
     - id: black
 
 - repo: https://github.com/PyCQA/bandit
-  rev: 1.7.0
+  rev: 1.7.4
   hooks:
     - id: bandit
       args: ['-s', 'B608,B605', '-x', 'tests/', '-r', 'libs']
