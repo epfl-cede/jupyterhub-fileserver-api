@@ -13,5 +13,7 @@ EXPOSE 8080/tcp
 RUN chown 1000 /app
 RUN useradd -r -u 1000 -g users jovyan
 USER jovyan:users
+# for testing
+RUN mkdir /tmp/test2/
 ENV FLASK_CONFIG=production
-CMD gunicorn -b 0.0.0.0:8080 -w 4 app:app
+CMD gunicorn -b 0.0.0.0:8080 -t 120 -w 4 app:app
