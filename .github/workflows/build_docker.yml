@@ -121,4 +121,4 @@ jobs:
         run: cosign sign ${TAGS}
         env:
           COSIGN_EXPERIMENTAL: true
-          TAGS: ${{ steps.docker_meta.outputs.tags }}
+          TAGS: ${{ steps.meta.outputs.tags }}
