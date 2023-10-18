@@ -26,6 +26,7 @@ class Output:
                     "payload": self.payload,
                     "md5_payload": md5.md5_payload(),
                 }
+                print("Output generated")
             else:
                 payload = "{}"
                 request = {"payload": payload}

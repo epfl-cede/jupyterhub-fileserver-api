@@ -10,7 +10,8 @@ from libs.fct_output import Output
 from libs.fct_inputs import ValidateInput
 from libs.fct_auth import Auth
 from libs.fct_config import ConfigFile
-from libs.flask_stats.flask_stats import Stats
+
+# from libs.flask_stats.flask_stats import Stats
 
 # Changed from get_logger, deprecation warning
 log = reusables.setup_logger("main", level=logging.DEBUG)
@@ -22,7 +23,8 @@ conf = ConfigFile("config.json")
 
 app = Flask(__name__)
 api = Api(app)
-Stats(app)
+# TODO reactivate
+# Stats(app)
 auth = Auth(conf.auth)
 
 
@@ -43,8 +45,10 @@ class callfct(Resource):
 
                 if Ccommand.isok():
                     payload = Ccommand.GetPayload()
+                    print("Payload fetched")
                 else:
                     payload = None
+                    print("Payload is None")
 
                 if Ccommand.isok():
                     if debug:

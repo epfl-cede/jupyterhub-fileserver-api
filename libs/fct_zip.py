@@ -43,6 +43,7 @@ class ZfS:
     def __init__(self, conf, payload, *kwargs):
         sl = SendLog()
         sl.write(event="ZfS", action="init", userid=None)
+        print("ZfS init")
         try:
             # root = conf.homeroot
             dyn_root = DynamicRoot(conf)
@@ -58,12 +59,14 @@ class ZfS:
                 )
                 self.origin = os.path.join(userloc, folder)
                 sl.write(event="self.root", action=self.root, userid=None)
+                print("Path constructed")
                 if not os.path.exists(self.root):
                     self.status = "Error : destination does not exist"
                     self.errcode = 440
                 else:
                     self.status = "OK"
                     self.errcode = 0
+                print("Path ok")
             else:
                 self.status = self.user.status
                 self.errcode = self.user.errcode
@@ -77,8 +80,10 @@ class ZfS:
         try:
             self.status = "OK"
             self.errcode = 0
+            print("Creating ZIP")
             zip = ZipBlob()
             blob = zip.GetZip(self.root)
+            print("ZIP created")
             log.write("Zfs SUCCESS", "from : " + self.root, self.user.getNotoUserid())
             return {
                 "origin": self.origin,
