@@ -1,8 +1,11 @@
 import json
+import logging
 
 from libs.fct_global import CalcMd5
 
 from flask import jsonify
+
+log = logging.getLogger("output")
 
 
 class Output:
@@ -10,10 +13,10 @@ class Output:
         self.status = None
         self.payload = None
 
-    def SetStatus(self, status):
+    def set_status(self, status):
         self.status = status
 
-    def SetPayload(self, payload):
+    def set_payload(self, payload):
         self.payload = json.dumps(payload)
 
     def generate(self):
@@ -26,7 +29,6 @@ class Output:
                     "payload": self.payload,
                     "md5_payload": md5.md5_payload(),
                 }
-                print("Output generated")
             else:
                 payload = "{}"
                 request = {"payload": payload}
@@ -36,6 +38,7 @@ class Output:
                     "payload": payload,
                     "md5_payload": md5.md5_payload(),
                 }
+            log.debug("Output generated: {0}".format(out))
         else:
             out = "Something is wrong here please contact support"
 

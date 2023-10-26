@@ -11,6 +11,8 @@ from werkzeug.datastructures import TypeConversionDict, ImmutableTypeConversionD
 from libs.flask_stats.record_request import RecordRequest
 from libs.flask_stats.sqlite_repository import SqliteRepository
 
+log = logging.getLogger("stats")
+
 
 class Stats:
     def __init__(self, app: Flask = None):
@@ -49,14 +51,14 @@ class Stats:
             d = TypeConversionDict(request.cookies)
             d["request_time"] = time.time()
             request.cookies = ImmutableTypeConversionDict(d)
-            logging.info("before_request %s" % request)
+            log.info("before_request %s" % request)
 
         @app.after_request
         def after_request(response: Response):
-            logging.info("after_request %s of %s" % (response, request))
+            log.info("after_request %s of %s" % (response, request))
 
             duration = time.time() - request.cookies["request_time"]
-            logging.info("request_time %s" % duration)
+            log.info("request_time %s" % duration)
 
             r = RecordRequest(
                 uri=request.path, response_code=response.status_code, duration=duration

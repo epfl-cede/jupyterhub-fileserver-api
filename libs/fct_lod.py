@@ -1,35 +1,19 @@
 import os
-import json
 import time
+import logging
 from pathlib import Path
 
-from libs.fct_global import moodle2notouser
-from libs.fct_global import DynamicRoot
+from libs.fct_base import RequestExecutor
+
+log = logging.getLogger("lister")
 
 
-class LoD:
+class LoD(RequestExecutor):
     def __init__(self, conf, payload, *kwargs):
-        try:
-            dyn_root = DynamicRoot(conf)
-            payload = json.loads(payload)
-            user = moodle2notouser(payload["user"])
-
-            if user.errcode == 0:
-                userloc = user.getNotoUser()
-                if userloc == "":
-                    self.status = "Empty user path rejected"
-                    self.errcode = 500
-                    self.root = dyn_root.getInvalidPath()
-                    return
-                self.root = os.path.join(dyn_root.getRoot(userloc)["root"], userloc)
-                self.status = "OK"
-                self.errcode = 0
-            else:
-                self.status = user.status
-                self.errcode = user.errcode
-        except Exception as e:
-            self.status = "Error with payload: {0}".format(e)
-            self.errcode = 500
+        RequestExecutor.__init__(self, conf, payload, log)
+        if self.errcode != 0:
+            return
+        self.status = "OK"
 
     def _path_to_dict(self, path):
         if os.path.exists(path):
@@ -47,56 +31,33 @@ class LoD:
             self.errcode = 404
             return None
 
-    def _getLoF(self):
+    def _getLoD(self):
         try:
             self.status = "OK"
             self.errcode = 0
-            return self._path_to_dict(self.root)
+            return self._path_to_dict(self.user_home_path)
         except Exception as e:
             self.status = "Error reading directory: {0}".format(e)
             self.errcode = -1
+            log.error("Error reading directory: {0}".format(e))
             return []
 
-    def GetPayload(self):
-        return self._getLoF()
-
-    def isok(self):
-
-        if self.status == "OK":
-            return True
-        else:
-            return False
-
-    def GetStatus(self):
-        status = {"code": self.errcode, "status": self.status}
-        return status
+    def get_payload(self):
+        return self._getLoD()
 
 
-class LoF:
+class LoF(RequestExecutor):
     def __init__(self, conf, payload, *kwargs):
+        RequestExecutor.__init__(self, conf, payload, log)
+        # Any exception during base class init?
+        if self.errcode != 0:
+            return
+
         try:
-            dyn_root = DynamicRoot(conf)
-            payload = json.loads(payload)
-            user = moodle2notouser(payload["user"])
-
-            if user.errcode == 0:
-                userloc = user.getNotoUser()
-                if userloc == "":
-                    # Never return with an empty user path, would allow access to all user directories
-                    self.status = "Empty user path rejected"
-                    self.errcode = 500
-                    self.root = dyn_root.getInvalidPath()
-                    return
-                self.root = os.path.join(dyn_root.getRoot(userloc)["root"], userloc)
-                self.path = payload["path"]
-                self.status = "OK"
-                self.errcode = 0
-            else:
-                self.status = user.status
-                self.errcode = user.errcode
-
-        except Exception as e:
-            self.status = "Error with payload: {0}".format(e)
+            self.path = self.payload["path"]
+        except KeyError:
+            log.error("'path' missing in payload")
+            self.status = "'path' missing in payload"
             self.errcode = 500
 
     def _path_to_dict(self, path):
@@ -142,55 +103,31 @@ class LoF:
         try:
             self.status = "OK"
             self.errcode = 0
-            return self._path_to_dict(os.path.join(self.root, self.path))
+            return self._path_to_dict(os.path.join(self.user_home_path, self.path))
         except Exception as e:
             self.status = "Error reading directory: {0}".format(e)
             self.errcode = -1
+            log.error("Error reading directory: {0}".format(e))
             return []
 
-    def GetPayload(self):
+    def get_payload(self):
         return self._getLoF()
 
-    def isok(self):
 
-        if self.status == "OK":
-            return True
-        else:
-            return False
-
-    def GetStatus(self):
-        status = {"code": self.errcode, "status": self.status}
-        return status
-
-
-class Ls:
+class Ls(RequestExecutor):
     def __init__(self, conf, payload, *kwargs):
+        RequestExecutor.__init__(self, conf, payload, log)
+        # Any exception during base class init?
+        if self.errcode != 0:
+            return
+
         try:
-            dyn_root = DynamicRoot(conf)
-            payload = json.loads(payload)
-            user = moodle2notouser(payload["user"])
-
-            if user.errcode == 0:
-                userloc = user.getNotoUser()
-                if userloc == "":
-                    # Never return with an empty user path, would allow access to all user directories
-                    self.status = "Empty user path rejected"
-                    self.errcode = 500
-                    self.root = dyn_root.getInvalidPath()
-                    return
-                path = payload["path"]
-                self.root = os.path.join(
-                    dyn_root.getRoot(userloc)["root"], userloc, path
-                )
-                self.status = "OK"
-                self.errcode = 0
-            else:
-                self.status = user.status
-                self.errcode = user.errcode
-
-        except Exception as e:
-            self.status = "Error with payload AAA: {0}".format(e)
+            self.path = self.payload["path"]
+        except KeyError:
+            log.error("'path' missing in payload")
+            self.status = "'path' missing in payload"
             self.errcode = 500
+        self.root = os.path.join(self.user_home_path, self.path)
 
     def _path_to_dict(self, path):
         d = []
@@ -218,6 +155,7 @@ class Ls:
             d = sorted(d, key=lambda x: x["type"])
             return d
         else:
+            log.error("Directory doesn't exist: {0}".format(path))
             self.status = "Directory doesn't exist: {0}".format(path)
             self.errcode = 404
             return None
@@ -230,18 +168,8 @@ class Ls:
         except Exception as e:
             self.status = "Error reading directory: {0}".format(e)
             self.errcode = -1
+            log.error("Error reading directory: {0}".format(e))
             return []
 
-    def GetPayload(self):
+    def get_payload(self):
         return self._getLs()
-
-    def isok(self):
-
-        if self.status == "OK":
-            return True
-        else:
-            return False
-
-    def GetStatus(self):
-        status = {"code": self.errcode, "status": self.status}
-        return status

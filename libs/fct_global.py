@@ -16,6 +16,8 @@ except ImportError:
     customLogger = False
 import logging
 
+log = logging.getLogger("globals")
+
 try:
     from notouser import notoDiskInfo
 
@@ -31,9 +33,14 @@ class DynamicRoot:
     If the notoDiskInfo class is not available, the default "root" configuration item is used
     """
 
+    ndi = None
+    root = None
+
     def __init__(self, conf):
         if dynamic_root_available and conf.dynamic_root:
             self.ndi = notoDiskInfo()
+            if self.ndi is None:
+                log.error("notoDiskInfo failed")
         else:
             self.ndi = None
             self.root = conf.homeroot

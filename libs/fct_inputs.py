@@ -69,13 +69,13 @@ class ValidateInput:
                 return False
         return True
 
-    def isok(self):
+    def is_ok(self):
 
         if self.status == "OK":
             return True
         else:
             return False
 
-    def GetStatus(self):
+    def get_status(self):
         status = {"code": self.errcode, "status": self.status}
         return status

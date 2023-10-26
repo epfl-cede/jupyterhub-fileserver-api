@@ -119,7 +119,7 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         shell: bash
-        run: yes | cosign sign ${TAGS}
+        run: "yes | cosign sign ${TAGS}"
         env:
           COSIGN_EXPERIMENTAL: true
           TAGS: ${{ steps.meta.outputs.tags }}
