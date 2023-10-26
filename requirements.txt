@@ -1,7 +1,7 @@
 aniso8601==8.0.0
 #bleach==3.1.0
 bleach==3.3.0
-certifi==2019.3.9
+certifi
 chardet==3.0.4
 Click==7.0
 docutils==0.14
@@ -18,8 +18,8 @@ pkginfo==1.5.0.1
 Pygments==2.7.4
 pytz==2020.1
 readme-renderer==24.0
-requests==2.21.0
-requests-toolbelt==0.9.1
+requests==2.31.0
+# requests-toolbelt==0.9.1
 six==1.12.0
 SQLAlchemy==1.4.15
 tqdm==4.31.1
