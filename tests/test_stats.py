@@ -6,7 +6,7 @@ def test_stats(client):
     data = json.loads(rv.data)
 
     assert rv.status == "200 OK"
-    assert data["config"]["ENV"] != ""
+    assert data["config"]["APPLICATION_ROOT"] != ""
 
 
 def test_endpoint_stats(client):
