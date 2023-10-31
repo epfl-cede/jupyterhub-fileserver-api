@@ -75,9 +75,9 @@ class ZfS(Zipper):
         sl.write(event="self.root", action=self.root, userid=None)
         log.debug("ZIP source path: {0}".format(self.origin))
         if not os.path.exists(self.root):
-            self.status = "Error: destination '{0}' does not exist".format(self.root)
+            self.status = "Error: source '{0}' does not exist".format(self.root)
             self.errcode = 500
-            log.error("ZIP destination does not exist: {0}".format(self.root))
+            log.error("ZIP source does not exist: {0}".format(self.root))
         else:
             self.status = "OK"
             self.errcode = 0

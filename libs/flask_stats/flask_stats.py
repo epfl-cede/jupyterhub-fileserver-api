@@ -22,8 +22,6 @@ class Stats:
 
         def decorate_endpoints():
             endpoints = {str(x): x.endpoint for x in self.app.url_map.iter_rules()}
-            # Stop flooding logs with health checks
-            del endpoints["/healthz"]
 
             from functools import wraps
 
@@ -53,14 +51,15 @@ class Stats:
             d = TypeConversionDict(request.cookies)
             d["request_time"] = time.time()
             request.cookies = ImmutableTypeConversionDict(d)
-            log.info("before_request %s" % request)
+            if request.endpoint != "healthz":
+                log.info("before_request %s" % request)
 
         @app.after_request
         def after_request(response: Response):
-            log.info("after_request %s of %s" % (response, request))
-
             duration = time.time() - request.cookies["request_time"]
-            log.info("request_time %s" % duration)
+            if request.endpoint != "healthz":
+                log.info("after_request %s of %s" % (response, request))
+                log.info("request_time %s" % duration)
 
             r = RecordRequest(
                 uri=request.path, response_code=response.status_code, duration=duration
