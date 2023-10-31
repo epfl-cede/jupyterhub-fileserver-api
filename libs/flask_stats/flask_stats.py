@@ -22,6 +22,8 @@ class Stats:
 
         def decorate_endpoints():
             endpoints = {str(x): x.endpoint for x in self.app.url_map.iter_rules()}
+            # Stop flooding logs with health checks
+            del endpoints["/healthz"]
 
             from functools import wraps
 
