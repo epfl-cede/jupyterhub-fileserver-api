@@ -1,6 +1,6 @@
 # Kustomization Example Specific for a Single JupyterHub Instance
 We run one JupyterHub per Moodle course. This allows for easy individualisation of
-courses and an uncomplicated lifecycle management, but comes with higher costs in respect to
+courses and an uncomplicated lifecycle management, but comes at higher costs in respect to
 memory and CPU consumption.
 
 ## kustomization.yml

@@ -52,7 +52,7 @@ It makes use of the highly versatile `kustomize` tool included in `kubectl`. The
 used by multiple installations and is referenced by the detailed
 configuration in the `example` directory. Don't copy the example as is, but adopt it to your environment.
 
-There is an [Ansible collection](https://gitlab.ethz.ch/k8s-let/ansible/jupyter_hub) containing a role
-which creates all files necessary to deploy JupyterHubs and API servers. JupyterHub instance definitions
-provided as a YAML list are used to configure deployment and removal scripts,
-values files for Helm, PVC definition and API deployments.
+At ETH Zurich, there are currently about 100 JupyterHubs deployed. Configuration parameters are held in
+YAML files. A Python program [jupysites](https://gitlab.ethz.ch/k8s-let/scripts/jupysites) reads the YAML
+files and creates a complete set of Kubernetes deployment files, and scripts for deploying and removing
+the installations.

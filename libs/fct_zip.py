@@ -33,6 +33,11 @@ class ZipBlob:
         return base64.b64encode(memory_file.read()).decode("utf-8")
 
     def put_zip(self, blob, path):
+        """
+        Extract data received as ZIP archive
+        :param blob: byte array
+        :param path: output file path
+        """
         memory_file = BytesIO(blob.read())  # BytesIO(base64.b64decode(blob))
         with zipfile.ZipFile(memory_file, "r") as zipf:
             os.chdir(path)
@@ -43,6 +48,10 @@ class ZipBlob:
 
 
 class Zipper(RequestExecutor):
+    """
+    Abstract class for requests dealing with ZIP files.
+    """
+
     def handle_archive(self):
         raise NotImplementedError
 
@@ -85,6 +94,10 @@ class ZfS(Zipper):
         log.debug("ZfS init complete")
 
     def handle_archive(self):
+        """
+        Pack a directory into a ZIP file.
+        :return: dict for response payload
+        """
         log.debug("ZfS handle_archive start")
         sl = SendLog()
         try:
@@ -157,10 +170,11 @@ class UzU(Zipper):
             log.debug("UzU init complete")
             return
 
-        # self.status = self.user.status
-        # self.errcode = self.user.errcode
-
     def _checkdest(self):
+        """
+        Test if destination directory already exists. Add/Increase version suffix if needed.
+        :return: False, if versions exceed limit.
+        """
         root = self.root
         version = 1
         while os.path.exists(root):
@@ -177,6 +191,9 @@ class UzU(Zipper):
         return True
 
     def handle_archive(self):
+        """
+        Unpack byte array received in payload as a ZIP file.
+        """
         log.debug("UzU handle_archive start")
         sl = SendLog()
         if self._checkdest():
