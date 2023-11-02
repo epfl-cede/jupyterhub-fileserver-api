@@ -252,7 +252,11 @@ class UzU(Zipper):
             sl.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
 
             log.debug("UzU handle_archive completed")
-            return {"extractpath": os.path.relpath(self.root, self.user_home_path)}
+            return {
+                "extractpath": os.path.join(
+                    self.userloc, os.path.relpath(self.root, self.user_home_path)
+                )
+            }
 
         sl.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
         return []
