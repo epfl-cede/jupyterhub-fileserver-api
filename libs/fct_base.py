@@ -56,10 +56,10 @@ class RequestExecutor:
         if self.userloc == "":
             self.status = "Empty user home path rejected"
             self.errcode = 500
-            self.root = self.dyn_root.getInvalidPath()
+            self.root = self.dyn_root.get_invalid_path()
             return
         self.user_home_path = os.path.join(
-            self.dyn_root.getRoot(self.userloc)["root"], self.userloc
+            self.dyn_root.get_root(self.userloc)["root"], self.userloc
         )
         if not os.path.exists(self.user_home_path):
             self.status = "Error: user home does not exist"
@@ -73,9 +73,6 @@ class RequestExecutor:
             return True
         else:
             return False
-
-    def get_payload(self):
-        return self.handle_archive()
 
     def get_status(self):
         status = {"code": self.errcode, "status": self.status}

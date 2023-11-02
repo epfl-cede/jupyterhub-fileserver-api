@@ -13,7 +13,7 @@ def request_items(payload):
         "user": auth["user"],
     }
     md5 = CalcMd5(req).md5_payload()
-    hmac = CalcHmac(req, auth["key"]).getHmac()
+    hmac = CalcHmac(req, auth["key"]).get_hmac()
 
     return req, md5, hmac
 

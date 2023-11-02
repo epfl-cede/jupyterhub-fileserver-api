@@ -9,6 +9,10 @@ log = logging.getLogger("lister")
 
 
 class LoD(RequestExecutor):
+    """
+    Collect a directory tree as list.
+    """
+
     def __init__(self, conf, payload, *kwargs):
         RequestExecutor.__init__(self, conf, payload, log)
         if self.errcode != 0:
@@ -19,9 +23,11 @@ class LoD(RequestExecutor):
         if os.path.exists(path):
             d = None
             if os.path.isdir(path):
-                d = {"name": os.path.basename(path)}
-                d["type"] = "directory"
-                d["children"] = []
+                d = {
+                    "name": os.path.basename(path),
+                    "type": "directory",
+                    "children": [],
+                }
                 for x in os.listdir(path):
                     if not x.startswith(".") and os.path.isdir(os.path.join(path, x)):
                         d["children"].append(self._path_to_dict(os.path.join(path, x)))
@@ -31,7 +37,7 @@ class LoD(RequestExecutor):
             self.errcode = 404
             return None
 
-    def _getLoD(self):
+    def _get_lod(self):
         try:
             self.status = "OK"
             self.errcode = 0
@@ -43,10 +49,14 @@ class LoD(RequestExecutor):
             return []
 
     def get_payload(self):
-        return self._getLoD()
+        return self._get_lod()
 
 
 class LoF(RequestExecutor):
+    """
+    Collect a tree of files and directories.
+    """
+
     def __init__(self, conf, payload, *kwargs):
         RequestExecutor.__init__(self, conf, payload, log)
         # Any exception during base class init?
@@ -99,7 +109,7 @@ class LoF(RequestExecutor):
             self.errcode = 404
             return None
 
-    def _getLoF(self):
+    def _get_lof(self):
         try:
             self.status = "OK"
             self.errcode = 0
@@ -111,10 +121,14 @@ class LoF(RequestExecutor):
             return []
 
     def get_payload(self):
-        return self._getLoF()
+        return self._get_lof()
 
 
 class Ls(RequestExecutor):
+    """
+    Return a directory listing.
+    """
+
     def __init__(self, conf, payload, *kwargs):
         RequestExecutor.__init__(self, conf, payload, log)
         # Any exception during base class init?
@@ -130,6 +144,11 @@ class Ls(RequestExecutor):
         self.root = os.path.join(self.user_home_path, self.path)
 
     def _path_to_dict(self, path):
+        """
+        Browse a directory tree.
+        :param path: root directory to start the tree
+        :return: list of dicts of filesystem elements
+        """
         d = []
         if os.path.exists(path):
             for ls in os.listdir(path):
@@ -160,7 +179,7 @@ class Ls(RequestExecutor):
             self.errcode = 404
             return None
 
-    def _getLs(self):
+    def _get_ls(self):
         try:
             self.status = "OK"
             self.errcode = 0
@@ -172,4 +191,4 @@ class Ls(RequestExecutor):
             return []
 
     def get_payload(self):
-        return self._getLs()
+        return self._get_ls()

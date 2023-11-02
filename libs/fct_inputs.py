@@ -27,7 +27,7 @@ class ValidateInput:
                                 request=self.request, key=self.auth.UserKey(user)
                             )
                             # check key encryption
-                            if self.request["key"] == hmac.getHmac():
+                            if self.request["key"] == hmac.get_hmac():
                                 self.status = "OK"
                                 self.errcode = 0
                                 return True

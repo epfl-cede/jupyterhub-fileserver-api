@@ -55,6 +55,9 @@ class Zipper(RequestExecutor):
     def handle_archive(self):
         raise NotImplementedError
 
+    def get_payload(self):
+        return self.handle_archive()
+
 
 class ZfS(Zipper):
     """

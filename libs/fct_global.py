@@ -3,27 +3,31 @@ import hashlib
 import hmac
 import os
 
+# Try imports specific to EPFL environment
+#
+# Access to identity management
 try:
     from notouser import notoUser
 except ImportError:
     from libs.dummyUser import notoUser
-
-try:
-    from cedelogger import cedeLogger
-
-    customLogger = True  # pragma: no cover
-except ImportError:
-    customLogger = False
-import logging
-
-log = logging.getLogger("globals")
-
+# User path information
 try:
     from notouser import notoDiskInfo
 
     dynamic_root_available = True
 except ImportError:
     dynamic_root_available = False
+# External logging facility
+try:
+    from cedelogger import cedeLogger
+
+    customLogger = True  # pragma: no cover
+except ImportError:
+    customLogger = False
+
+import logging
+
+log = logging.getLogger("globals")
 
 
 class DynamicRoot:
@@ -45,14 +49,14 @@ class DynamicRoot:
             self.ndi = None
             self.root = conf.homeroot
 
-    def getRoot(self, username):
+    def get_root(self, username):
         if self.ndi is not None:
             return self.ndi.get_root(username)
         else:
             exists = os.path.isdir(os.path.join(self.root, username))
             return {"exists": exists, "root": self.root}
 
-    def getInvalidPath(self):
+    def get_invalid_path(self):
         return os.path.join(os.sep, "invalid_path")
 
 
@@ -77,7 +81,7 @@ class CalcHmac:
         ).decode("utf-8")
         self.hmac = None
 
-    def getHmac(self):
+    def get_hmac(self):
         """
         This function calculate the hmac sha256 using the key
         :return: the base64 hmac of self.user + self.timestamp + self.save_md5_payload

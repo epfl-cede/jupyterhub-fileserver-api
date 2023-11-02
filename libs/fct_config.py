@@ -4,6 +4,11 @@ import logging
 
 
 class ConfigFile:
+    """
+    Holds configuration information, from defaults, configuration file, or environment
+    variables.
+    """
+
     def __str__(self):
         s = """
         auth: {0}
