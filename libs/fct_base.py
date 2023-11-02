@@ -58,9 +58,8 @@ class RequestExecutor:
             self.errcode = 500
             self.root = self.dyn_root.get_invalid_path()
             return
-        self.user_home_path = os.path.join(
-            self.dyn_root.get_root(self.userloc)["root"], self.userloc
-        )
+        self.root = self.dyn_root.get_root(self.userloc)["root"]
+        self.user_home_path = os.path.join(self.root, self.userloc)
         if not os.path.exists(self.user_home_path):
             self.status = "Error: user home does not exist"
             self.errcode = 500

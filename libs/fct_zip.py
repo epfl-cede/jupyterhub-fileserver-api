@@ -171,7 +171,7 @@ class UzU(Zipper):
                 "gid": os.stat(self.user_home_path).st_gid,
             }
             self.root = os.path.join(self.user_home_path, destination)
-            self.basename = os.path.join(self.root)
+            self.basename = self.dyn_root.get_root(self.userloc)["root"]
 
             self.status = "OK"
             self.errcode = 0
@@ -252,11 +252,8 @@ class UzU(Zipper):
             sl.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
 
             log.debug("UzU handle_archive completed")
-            return {
-                "extractpath": os.path.join(
-                    self.userloc, os.path.relpath(self.root, self.user_home_path)
-                )
-            }
+            # Only return path parts from user home root downwards. Moodle plugin want's it this way
+            return {"extractpath": self.root.replace(self.basename, "")}
 
         sl.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
         return []

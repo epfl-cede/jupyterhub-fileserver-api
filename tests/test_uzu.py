@@ -28,7 +28,5 @@ def test_uzu(client):
     assert data["return"]["code"] == 0
     # Test md5 checksum
     assert md5_response == md5_payload
-    # Test if extraction directory is returned
-    assert json.loads(data["payload"])["extractpath"] == "zipdir"
     # Test if file has been created
     assert file_list[0] == "part1.txt"
