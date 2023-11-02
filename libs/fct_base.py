@@ -8,11 +8,12 @@ class RequestExecutor:
     Base class for request execution functions
     """
 
-    dyn_root = None
-    user = None
-    user_home_path = None
-    userloc = None
-    payload = None
+    dyn_root = None  # for EPFL: user dependent path info; for k8s: same as root
+    user = None  # user information: mail, home dir
+    user_home_path = None  # complete path to home dir
+    userloc = None  # home directory (dir name, not path)
+    root = None  # root of user directories, above home dirs
+    payload = None  # payload dict from request
     status = "OK"
     errcode = 0
 
