@@ -157,7 +157,13 @@ class UzU(Zipper):
             log.error("ZIP destination is not defined")
             return
         else:
-            self.blob = files["file"]  # payload['blob']
+            try:
+                self.blob = files["file"]  # payload['blob']
+            except KeyError:
+                self.status = "No upload archive found in request"
+                self.errcode = 500
+                log.error(self.status)
+                return
             log.debug("Blob is {0}".format(self.blob))
             self.access = {
                 "chmod": oct(os.stat(self.user_home_path).st_mode)[-3:],
@@ -244,9 +250,9 @@ class UzU(Zipper):
                     os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
             sl.write("Uzu SUCCESS", "from : " + self.root, self.user.getNotoUserid())
+
             log.debug("UzU handle_archive completed")
-            # TODO: what is this 'replace'?
-            return {"extractpath": self.root.replace(self.basename, "")}
+            return {"extractpath": os.path.relpath(self.root, self.user_home_path)}
 
         sl.write("Uzu FAILED", "from : " + self.root, self.user.getNotoUserid())
         return []
