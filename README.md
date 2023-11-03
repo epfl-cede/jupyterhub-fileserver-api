@@ -19,6 +19,9 @@ The API service is in production use in two different environments, with Jupyter
 While the Kubernetes environment is very generic and needs little to no extension, a conventional
 server requires the API to get access to authentication and authorization services.
 
+## Docker Image
+Docker image builds can be found at [Docker hub](https://hub.docker.com/r/bengig/jupyterhub-fileserver-api/).
+
 ## Usage
 ### Configuration
 Configuration may be done by a configuration file names `config.json` located in the root directory
