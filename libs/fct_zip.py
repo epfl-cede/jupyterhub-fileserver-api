@@ -191,12 +191,23 @@ class UzU(Zipper):
             root = self.root + "-V" + str(version)
 
             if version > 100:  # avoid infinite loop
-                self.status = "Error : ZIP destination folder version limit reached"
+                self.status = "Error: ZIP destination folder version limit reached"
                 self.errcode = 500
-                log.debug("ZIP destination folder version limit reached")
+                log.error("ZIP destination folder version limit reached")
                 return False
         self.root = root
-        os.mkdir(self.root)
+        try:
+            os.mkdir(self.root)
+        except FileNotFoundError:
+            self.status = "Error: destination folder not found"
+            self.errcode = 500
+            log.error("Destination folder not found")
+            return False
+        except Exception as e:
+            self.status = "Error: {0}".format(e)
+            self.errcode = 500
+            log.error(e)
+            return False
         return True
 
     def handle_archive(self):
