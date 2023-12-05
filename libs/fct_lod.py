@@ -71,10 +71,10 @@ class LoF(RequestExecutor):
             self.errcode = 500
         try:
             self.max_depth = self.payload["max_depth"]
-        except:
+        except KeyError:
             self.max_depth = conf.max_depth
 
-    def _path_to_dict(self, path, depth = 0):
+    def _path_to_dict(self, path, depth=0):
         d = []
         if os.path.exists(path):
             for ls in os.listdir(path):
@@ -82,7 +82,7 @@ class LoF(RequestExecutor):
                 if not ls.startswith("."):  # remove hidden file
                     ls = Path(os.path.join(path, ls))
                     if os.path.isdir(ls):
-                        if depth > self.max_depth: # do not go further than max_depth
+                        if depth > self.max_depth:  # do not go further than max_depth
                             d.append(
                                 {
                                     "name": os.path.basename(ls),
@@ -95,7 +95,7 @@ class LoF(RequestExecutor):
                                 {
                                     "name": os.path.basename(ls),
                                     "type": "directory",
-                                    "children": self._path_to_dict(ls, depth+1),
+                                    "children": self._path_to_dict(ls, depth + 1),
                                 }
                             )
                     else:
