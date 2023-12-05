@@ -9,5 +9,6 @@
   "ttl": 10,
   "root": "/path/to/homes",
   "dynamic_root": false,
-  "chmod": false
+  "chmod": false,
+  "max_depth": 5
 }

@@ -69,8 +69,12 @@ class LoF(RequestExecutor):
             log.error("'path' missing in payload")
             self.status = "'path' missing in payload"
             self.errcode = 500
+        try:
+            self.max_depth = self.payload["max_depth"]
+        except:
+            self.max_depth = conf.max_depth
 
-    def _path_to_dict(self, path):
+    def _path_to_dict(self, path, depth = 0):
         d = []
         if os.path.exists(path):
             for ls in os.listdir(path):
@@ -78,13 +82,22 @@ class LoF(RequestExecutor):
                 if not ls.startswith("."):  # remove hidden file
                     ls = Path(os.path.join(path, ls))
                     if os.path.isdir(ls):
-                        d.append(
-                            {
-                                "name": os.path.basename(ls),
-                                "type": "directory",
-                                "children": self._path_to_dict(ls),
-                            }
-                        )
+                        if depth > self.max_depth: # do not go further than max_depth
+                            d.append(
+                                {
+                                    "name": os.path.basename(ls),
+                                    "type": "directory",
+                                    "children": None,
+                                }
+                            )
+                        else:
+                            d.append(
+                                {
+                                    "name": os.path.basename(ls),
+                                    "type": "directory",
+                                    "children": self._path_to_dict(ls, depth+1),
+                                }
+                            )
                     else:
                         try:
                             last_mod = time.strftime(
