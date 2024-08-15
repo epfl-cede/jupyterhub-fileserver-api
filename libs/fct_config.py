@@ -27,6 +27,7 @@ class ConfigFile:
         self.homeroot = ""
         self.chmod = False
         self.dynamic_root = None
+        self.max_depth = 10
         config_file_present = False
         try:
             # TODO: path to config file
@@ -43,6 +44,7 @@ class ConfigFile:
             self.homeroot = self.configjson["root"]
             self.dynamic_root = self.configjson["dynamic_root"]
             self.chmod = self.configjson["chmod"]
+            self.max_depth = int(self.configjson["max_depth"])
 
         # Overwrite configuration if environment variables are set
         user = os.getenv("AUTH_USER")
