@@ -256,7 +256,7 @@ class UzU(Zipper):
                     # chmod only performed if requested in configuration file.
                     # This chmod is not needed in Kubernetes.
                     os.system(
-                        f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"
+                        f"chown -R {self.access['uid']}:{self.access['gid']} '{self.root}'"  # noqa: E231
                     )
                     os.system(f"chmod -R {self.access['chmod']} {self.root}")
 
