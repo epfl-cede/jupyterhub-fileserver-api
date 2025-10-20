@@ -3,4 +3,4 @@ Flask-RESTful==0.3.10
 gunicorn==23.0.0
 pytest==8.3.2
 SQLAlchemy==1.4.53
-Werkzeug==3.0.3
+Werkzeug==3.0.6
